@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import { Component } from 'react';
 import './container.css';
 
 import SearchBar from '../searchBar/searchBar';

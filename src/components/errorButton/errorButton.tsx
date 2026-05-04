@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import { Component } from 'react';
 import './errorButton.css';
 
 class ErrorButton extends Component {
