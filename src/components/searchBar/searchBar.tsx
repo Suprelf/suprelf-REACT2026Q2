@@ -42,15 +42,15 @@ class SearchBar extends Component<Props, State> {
 
     render() {
         return (
-            <div>
-                <div>
+            <div className="main-container">
+                <div className="search-container">
 
-                    <input type="text" placeholder="Search here"
+                    <input type="text" placeholder="Search here" className="search-input"
                         value={this.state.inputValue}
                         onChange={this.handleInput}>
                     </input>
 
-                    <button onClick={this.handleSearch}>Search</button>
+                    <button onClick={this.handleSearch} className="search-button">Search</button>
 
                 </div>
             </div>
