@@ -27,59 +27,71 @@ class Container extends Component<Props, State> {
     try {
       const inputValue = localStorage.getItem("last")
 
-      let data
+      let data: Pokemon[]
 
       if (inputValue && inputValue.trim() !== "") {
-        data = await fetchPokemonTerm(inputValue, 9)
+        try {
+          data = await fetchPokemonTerm(inputValue, 9)
+        } catch {
+          data = await fetchPokemonList();
+        }
+
       } else {
         data = await fetchPokemonList()
       }
 
-      this.setState({ listData: data }, () => {console.log(this.state.listData)})
+      this.setState({ listData: data })
 
     } catch (e) {
-      console.error(e)
+      this.setState({
+        error: "Failed to load data",
+      }  
+    );
     }
 
   }
 
   handleAddPokemon = async (value: string) => {
     try {
-      this.setState({ isLoading: true, error: "" })
+      this.setState({ isLoading: true, error: "" });
 
-      const newPokemon = await fetchPokemon(value)
+      const newPokemon = await fetchPokemon(value);
 
       this.setState((prevState) => {
-        const oldList = prevState.listData.some(
+        const exists = prevState.listData.some(
           (p) => p.name === newPokemon.name
-        )
+        );
 
-        const listData = oldList
+        const listData = exists
           ? prevState.listData
           : [newPokemon, ...prevState.listData];
 
         return {
           listData,
           isLoading: false,
-        }
+        };
+      });
 
-
-      }, () => console.log(this.state.listData))
     } catch (e) {
       this.setState({
         error: "Pokemon not found",
         isLoading: false,
-      })
+      });
     }
-   
-  }
+  };
 
   render() {
     return (
       <div className="container">
         <SearchBar onSearch={this.handleAddPokemon}></SearchBar>
 
-        <ItemTable listData={this.state.listData}/>
+        {this.state.error && (
+          <div className="error-message">
+            {this.state.error}
+          </div>
+        )}
+
+        <ItemTable listData={this.state.listData} />
 
         <ErrorButton />
       </div>

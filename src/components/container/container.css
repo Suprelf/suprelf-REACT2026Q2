@@ -9,3 +9,7 @@
   min-height: 100vh;
   box-sizing: border-box;
 }
+
+.error-message {
+  color: rgba(255, 0, 0, 0.5);
+}
