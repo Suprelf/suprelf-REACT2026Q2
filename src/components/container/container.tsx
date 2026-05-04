@@ -5,27 +5,41 @@ import SearchBar from "../searchBar/searchBar";
 import ItemTable from "../itemTable/itemTable";
 import ErrorButton from "../errorButton/errorButton";
 import { fetchPokemon, fetchPokemonList, fetchPokemonTerm } from "../../services/api";
+import type { Pokemon } from "../../types/types";
 
 
 type Props = {}
 
 type State = {
-  searchTerm: string,
   isLoading: boolean,
-  error: string
+  error: string,
+  listData: Pokemon[]
 }
 
 class Container extends Component<Props, State> {
   state: State = {
-    searchTerm: "",
     isLoading: false,
     error: "",
+    listData: []
   }
 
-  componentDidMount() {
-    fetchPokemonList().then(console.log);
-    fetchPokemon("pikachu").then(console.log);
-    fetchPokemonTerm("pikachu", 9).then(console.log);
+  async componentDidMount(): Promise<void> {
+    try {
+      const inputValue = localStorage.getItem("last")
+
+      let data
+
+      if (inputValue && inputValue.trim() !== "") {
+        data = await fetchPokemonTerm(inputValue, 9)
+      } else {
+        data = await fetchPokemonList()
+      }
+
+      this.setState({ listData: data })
+      console.log(data)
+    } catch (e) {
+      console.error(e)
+    }
 
   }
 
