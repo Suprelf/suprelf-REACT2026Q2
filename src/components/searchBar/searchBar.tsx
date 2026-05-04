@@ -33,14 +33,16 @@ class SearchBar extends Component<Props, State> {
 
     handleSearch = () => {
         const trimmed = this.state.inputValue.trim()
+
+        if (!trimmed) return
+
         const currentLocalValue = localStorage.getItem("last") ?? ""
 
-        if (trimmed !== currentLocalValue && trimmed !== "") {
-            localStorage.setItem("last", trimmed)
-        }
+        if (trimmed === currentLocalValue) return
 
+        localStorage.setItem("last", trimmed)
         this.props.onSearch(trimmed)
-    }
+    };
 
     render() {
         return (
