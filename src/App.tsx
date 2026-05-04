@@ -1,13 +1,14 @@
 import './App.css'
 import ErrorBoundary from './components/errorBoundary/errorBoundary'
 import ErrorButton from './components/errorButton/errorButton'
+import SearchBar from './components/searchBar/searchBar'
 
 function App() {
 
   return (
     <>
       <ErrorBoundary>
-        <ErrorButton></ErrorButton>
+        <SearchBar></SearchBar>
       </ErrorBoundary>
 
     </>
