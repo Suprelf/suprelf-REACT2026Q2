@@ -79,7 +79,7 @@ class Container extends Component<Props, State> {
       <div className="container">
         <SearchBar onSearch={this.handleAddPokemon}></SearchBar>
 
-        <ItemTable />
+        <ItemTable listData={this.state.listData}/>
 
         <ErrorButton />
       </div>

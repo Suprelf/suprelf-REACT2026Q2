@@ -1,7 +1,10 @@
 import React, { Component } from "react";
 import "./itemTable.css"
+import type { Pokemon } from "../../types/types";
 
-type Props = {}
+type Props = {
+    listData: Pokemon[]
+}
 
 type State = {}
 
@@ -16,22 +19,15 @@ class ItemTable extends Component<Props, State> {
                 </div>
                 <hr className="hr-header" />
 
-                <div className="table-item">
-                    <div className="item-name">name</div>
-                    <div className="item-desc">description</div>
-                </div>
-                <hr className="hr-item" />
-                <div className="table-item">
-                    <div className="item-name">name</div>
-                    <div className="item-desc">description</div>
-                </div>
-                <hr className="hr-item" />
-                <div className="table-item">
-                    <div className="item-name">name</div>
-                    <div className="item-desc">description</div>
-                </div>
-                <hr className="hr-item" />
-
+                {this.props.listData.map((pokemon) => (
+                    <div key={pokemon.name}>
+                        <div className="table-item">
+                            <div className="item-name">{pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1)}</div>
+                            <div className="item-desc">{pokemon.url}</div>
+                        </div>
+                        <hr className="hr-item" />
+                    </div>
+                ))}
             </div>
         );
     }
