@@ -6,10 +6,10 @@
 }
 
 .table-item {
-    display: flex;
-    flex-direction: row;
-    gap: 156px;
-    align-items: flex-start;
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    align-items: center;
+    column-gap: 20px;
 
 }
 
@@ -26,17 +26,17 @@
 }
 
 .hr-header {
-  display: block;
-  width: 100%;
-  border: none;
-  height: 2px;
-  background-color: rgba(40, 40, 40, 0.3)
+    display: block;
+    width: 100%;
+    border: none;
+    height: 2px;
+    background-color: rgba(40, 40, 40, 0.3)
 }
 
 .hr-item {
-  display: block;
-  width: 100%;
-  border: none;
-  height: 2px;
-  background-color: rgba(30, 30, 30, 0.1);
+    display: block;
+    width: 100%;
+    border: none;
+    height: 2px;
+    background-color: rgba(30, 30, 30, 0.1);
 }
