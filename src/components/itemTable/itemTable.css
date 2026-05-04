@@ -1,0 +1,42 @@
+.table-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 80%;
+}
+
+.table-item {
+    display: flex;
+    flex-direction: row;
+    gap: 156px;
+    align-items: flex-start;
+
+}
+
+.table-header {
+    text-shadow: 2px 2px 4px #00000030;
+}
+
+.item-name {
+    font-weight: 500;
+}
+
+.item-desc {
+    font-weight: 500;
+}
+
+.hr-header {
+  display: block;
+  width: 100%;
+  border: none;
+  height: 2px;
+  background-color: rgba(40, 40, 40, 0.3)
+}
+
+.hr-item {
+  display: block;
+  width: 100%;
+  border: none;
+  height: 2px;
+  background-color: rgba(30, 30, 30, 0.1);
+}

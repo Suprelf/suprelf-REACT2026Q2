@@ -10,7 +10,7 @@ class ErrorButton extends Component {
     }
 
     return (
-      <button onClick={() => this.setState({ isError: true })}>
+      <button onClick={() => this.setState({ isError: true })} className="error-button">
         Make Error
       </button>
     );
