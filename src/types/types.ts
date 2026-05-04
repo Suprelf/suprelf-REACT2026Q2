@@ -4,9 +4,9 @@ export interface Pokemon {
 }
 
 export type PokemonListResponse = {
-  results: Pokemon[]
-}
+  results: Pokemon[];
+};
 
 export type PokemonApiResponse = {
   name: string;
-}
+};

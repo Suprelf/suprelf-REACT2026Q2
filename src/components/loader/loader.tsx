@@ -1,9 +1,9 @@
-import React, { Component } from "react";
-import "./loader.css";
+import React, { Component } from 'react';
+import './loader.css';
 
-type Props = {}
+type Props = {};
 
-type State = {}
+type State = {};
 
 class Loader extends Component<Props, State> {
   render() {
@@ -15,4 +15,4 @@ class Loader extends Component<Props, State> {
   }
 }
 
-export default Loader
+export default Loader;
