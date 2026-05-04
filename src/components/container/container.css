@@ -1,0 +1,15 @@
+.container {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 64px;
+
+  padding: 32px;
+
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+.error-message {
+  color: rgba(255, 0, 0, 0.5);
+}
