@@ -6,6 +6,7 @@ import ItemTable from "../itemTable/itemTable";
 import ErrorButton from "../errorButton/errorButton";
 import { fetchPokemon, fetchPokemonList, fetchPokemonTerm } from "../../services/api";
 import type { Pokemon } from "../../types/types";
+import Loader from "../loader/loader";
 
 
 type Props = {}
@@ -16,12 +17,37 @@ type State = {
   listData: Pokemon[]
 }
 
+const loaderDelay = (ms: number) =>
+  new Promise((resolve) => setTimeout(resolve, ms))
+
+
 class Container extends Component<Props, State> {
   state: State = {
     isLoading: false,
     error: "",
     listData: []
   }
+
+  runWithLoader = async <T,>(request: Promise<T>): Promise<T> => {
+    this.setState({ isLoading: true });
+
+    const start = Date.now();
+
+    try {
+      const result = await request;
+
+      const elapsed = Date.now() - start;
+      const minTime = 1200;
+
+      if (elapsed < minTime) {
+        await loaderDelay(minTime - elapsed);
+      }
+
+      return result;
+    } finally {
+      this.setState({ isLoading: false });
+    }
+  };
 
   async componentDidMount(): Promise<void> {
     try {
@@ -31,9 +57,9 @@ class Container extends Component<Props, State> {
 
       if (inputValue && inputValue.trim() !== "") {
         try {
-          data = await fetchPokemonTerm(inputValue, 9)
+          data = await this.runWithLoader(fetchPokemonTerm(inputValue, 9))
         } catch {
-          data = await fetchPokemonList();
+          data = await this.runWithLoader(fetchPokemonList())
         }
 
       } else {
@@ -45,8 +71,8 @@ class Container extends Component<Props, State> {
     } catch (e) {
       this.setState({
         error: "Failed to load data",
-      }  
-    );
+      }
+      );
     }
 
   }
@@ -55,7 +81,7 @@ class Container extends Component<Props, State> {
     try {
       this.setState({ isLoading: true, error: "" });
 
-      const newPokemon = await fetchPokemon(value);
+      const newPokemon = await this.runWithLoader(fetchPokemon(value))
 
       this.setState((prevState) => {
         const exists = prevState.listData.some(
@@ -84,6 +110,8 @@ class Container extends Component<Props, State> {
     return (
       <div className="container">
         <SearchBar onSearch={this.handleAddPokemon}></SearchBar>
+
+        {this.state.isLoading && <Loader />}
 
         {this.state.error && (
           <div className="error-message">
