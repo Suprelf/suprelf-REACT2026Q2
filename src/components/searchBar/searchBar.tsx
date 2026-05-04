@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import "./searchBar.css"
 
 type Props = {
+    onSearch: (value: string) => void;
 }
 
 type State = {
@@ -36,6 +37,8 @@ class SearchBar extends Component<Props, State> {
 
         if (trimmed !== currentLocalValue && trimmed !== "") {
             localStorage.setItem("last", trimmed);
+
+            this.props.onSearch(trimmed)
         }
 
     }

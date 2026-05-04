@@ -35,18 +35,49 @@ class Container extends Component<Props, State> {
         data = await fetchPokemonList()
       }
 
-      this.setState({ listData: data })
-      console.log(data)
+      this.setState({ listData: data }, () => {console.log(this.state.listData)})
+
     } catch (e) {
       console.error(e)
     }
 
   }
 
+  handleAddPokemon = async (value: string) => {
+    try {
+      this.setState({ isLoading: true, error: "" })
+
+      const newPokemon = await fetchPokemon(value)
+
+      this.setState((prevState) => {
+        const oldList = prevState.listData.some(
+          (p) => p.name === newPokemon.name
+        )
+
+        const listData = oldList
+          ? prevState.listData
+          : [newPokemon, ...prevState.listData];
+
+        return {
+          listData,
+          isLoading: false,
+        }
+
+
+      }, () => console.log(this.state.listData))
+    } catch (e) {
+      this.setState({
+        error: "Pokemon not found",
+        isLoading: false,
+      })
+    }
+   
+  }
+
   render() {
     return (
       <div className="container">
-        <SearchBar></SearchBar>
+        <SearchBar onSearch={this.handleAddPokemon}></SearchBar>
 
         <ItemTable />
 
