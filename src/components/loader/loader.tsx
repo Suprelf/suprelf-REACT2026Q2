@@ -8,7 +8,7 @@ type State = {};
 class Loader extends Component<Props, State> {
   render() {
     return (
-      <div className="loader-container">
+      <div className="loader-container" data-testid="loader">
         <div className="spinner" />
       </div>
     );
