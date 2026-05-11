@@ -1,6 +1,6 @@
-import {render,screen} from '@testing-library/react';
+import {render,screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { http, HttpResponse } from 'msw';
 
 import Container from './container';
@@ -10,6 +10,10 @@ import { server } from '../../test-utils/server';
 
 
 describe('Container component', () => {
+beforeEach(() => {
+    localStorage.clear();
+    });
+    
   it('loads pokemon list on mount', async () => {
     render(<Container />);
 
@@ -46,7 +50,9 @@ it('do not duplicate existing pokemon on search', async () => {
     await user.type(input, 'pokemon-0');
     await user.click(button);
 
-    await screen.findByText('Pokemon-0');
+    await waitFor(() => {
+        expect(screen.getByText('Pokemon-0')).toBeInTheDocument();
+    });
 
     const all = screen.getAllByText('Pokemon-0');
 
