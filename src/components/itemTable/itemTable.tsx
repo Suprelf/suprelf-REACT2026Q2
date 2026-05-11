@@ -20,7 +20,7 @@ class ItemTable extends Component<Props, State> {
 
         {this.props.listData.map((pokemon) => (
           <div key={pokemon.name}>
-            <div className="table-item">
+            <div className="table-item" data-testid="pokemon-row">
               <div className="item-name">
                 {pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1)}
               </div>
