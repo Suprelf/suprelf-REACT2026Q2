@@ -111,4 +111,30 @@ it('do not duplicate existing pokemon on search', async () => {
 
     expect(await screen.findByText('Failed to load data')).toBeInTheDocument();
   });
+
+  it('show error when add pokemon fails', async () => {
+  const user = userEvent.setup();
+
+  const { http, HttpResponse } = await import('msw');
+  const { server } = await import('../../test-utils/server');
+
+  server.use(
+    http.get('https://pokeapi.co/api/v2/pokemon/:name', () => {
+      return HttpResponse.error();
+    })
+  );
+
+  render(<Container />);
+
+  await user.type(
+    screen.getByPlaceholderText('Search here'),
+    'invalid'
+  );
+
+  await user.click(screen.getByText('Search'));
+
+  expect(await screen.findByText('Pokemon not found')).toBeInTheDocument();
 });
+});
+
+
