@@ -5,7 +5,6 @@ import { mockData } from '../../test-utils/tableCorrectDataMock';
 import ItemTable from './itemTable';
 
 describe('ItemTable', () => {
-
   it('render headers', () => {
     render(<ItemTable listData={mockData} />);
 

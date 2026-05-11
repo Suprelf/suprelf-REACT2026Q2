@@ -5,7 +5,6 @@ import { createLocalStorageMock } from '../../test-utils/localStorageMock';
 
 import SearchBar from './searchBar';
 
-
 describe('SearchBar component', () => {
   beforeEach(() => {
     const localStorageMock = createLocalStorageMock();
@@ -19,8 +18,8 @@ describe('SearchBar component', () => {
   });
 
   it('render input and search button', () => {
-    render(<SearchBar onSearch={vi.fn()} />);   
-    
+    render(<SearchBar onSearch={vi.fn()} />);
+
     expect(screen.getByRole('textbox')).toBeInTheDocument();
 
     expect(screen.getByRole('button', { name: /search/i })).toBeInTheDocument();

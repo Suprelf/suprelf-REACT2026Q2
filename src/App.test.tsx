@@ -4,7 +4,7 @@ import App from './App';
 
 describe('App', () => {
   it('render Container and child elements inside ErrorBoundary', () => {
-    render(<App/>);
+    render(<App />);
 
     expect(screen.getByText(/make error/i)).toBeInTheDocument();
   });

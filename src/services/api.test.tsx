@@ -5,7 +5,6 @@ import { fetchPokemon, fetchPokemonList, fetchPokemonTerm } from './api';
 import type { Pokemon } from '../types/types';
 import { server } from '../test-utils/server';
 
-
 describe('fetchPokemonList', () => {
   it('return list of pokemons of correct length', async () => {
     const result: Pokemon[] = await fetchPokemonList(5);

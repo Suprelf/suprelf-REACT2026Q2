@@ -1,4 +1,4 @@
-import {render,screen, waitFor} from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, it, expect, beforeEach } from 'vitest';
 import { http, HttpResponse } from 'msw';
@@ -6,14 +6,11 @@ import { http, HttpResponse } from 'msw';
 import Container from './container';
 import { server } from '../../test-utils/server';
 
-
-
-
 describe('Container component', () => {
-beforeEach(() => {
+  beforeEach(() => {
     localStorage.clear();
-    });
-    
+  });
+
   it('loads pokemon list on mount', async () => {
     render(<Container />);
 
@@ -39,7 +36,7 @@ beforeEach(() => {
     expect(rows[0]).toHaveTextContent('pokemon-0');
   });
 
-it('do not duplicate existing pokemon on search', async () => {
+  it('do not duplicate existing pokemon on search', async () => {
     const user = userEvent.setup();
 
     render(<Container />);
@@ -51,13 +48,13 @@ it('do not duplicate existing pokemon on search', async () => {
     await user.click(button);
 
     await waitFor(() => {
-        expect(screen.getByText('Pokemon-0')).toBeInTheDocument();
+      expect(screen.getByText('Pokemon-0')).toBeInTheDocument();
     });
 
     const all = screen.getAllByText('Pokemon-0');
 
     expect(all).toHaveLength(1);
-});
+  });
 
   it('show error when pokemon not found', async () => {
     const user = userEvent.setup();
@@ -113,28 +110,23 @@ it('do not duplicate existing pokemon on search', async () => {
   });
 
   it('show error when add pokemon fails', async () => {
-  const user = userEvent.setup();
+    const user = userEvent.setup();
 
-  const { http, HttpResponse } = await import('msw');
-  const { server } = await import('../../test-utils/server');
+    const { http, HttpResponse } = await import('msw');
+    const { server } = await import('../../test-utils/server');
 
-  server.use(
-    http.get('https://pokeapi.co/api/v2/pokemon/:name', () => {
-      return HttpResponse.error();
-    })
-  );
+    server.use(
+      http.get('https://pokeapi.co/api/v2/pokemon/:name', () => {
+        return HttpResponse.error();
+      })
+    );
 
-  render(<Container />);
+    render(<Container />);
 
-  await user.type(
-    screen.getByPlaceholderText('Search here'),
-    'invalid'
-  );
+    await user.type(screen.getByPlaceholderText('Search here'), 'invalid');
 
-  await user.click(screen.getByText('Search'));
+    await user.click(screen.getByText('Search'));
 
-  expect(await screen.findByText('Pokemon not found')).toBeInTheDocument();
+    expect(await screen.findByText('Pokemon not found')).toBeInTheDocument();
+  });
 });
-});
-
-
