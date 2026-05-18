@@ -2,13 +2,7 @@ import './details.css';
 
 import Loader from '../loader/loader';
 import { useOutletContext } from 'react-router-dom';
-
-type PokemonDetails = {
-  id: number;
-  name: string;
-  image: string;
-  flavorText: string;
-};
+import type { PokemonDetails } from '../../types/types';
 
 type ContextType = {
   details: PokemonDetails | null;
