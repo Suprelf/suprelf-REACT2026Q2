@@ -5,21 +5,6 @@ import { fetchPokemon, fetchPokemonList, fetchPokemonDetails } from './api';
 
 import { server } from '../test-utils/server';
 
-const spriteMock = {
-  sprites: {
-    front_default: 'https://img.png',
-  },
-};
-
-const speciesMock = {
-  flavor_text_entries: [
-    {
-      flavor_text: 'hello\nworld\ftext',
-      language: { name: 'en' },
-    },
-  ],
-};
-
 describe('fetchPokemonList', () => {
   it('returns correct number of pokemons with full structure', async () => {
     server.use(
@@ -117,6 +102,15 @@ describe('fetchPokemon', () => {
 });
 
 describe('fetchPokemonDetails', () => {
+  const speciesMock = {
+    flavor_text_entries: [
+      {
+        flavor_text: 'hello\nworld\ftext',
+        language: { name: 'en' },
+      },
+    ],
+  };
+
   it('returns full pokemon details', async () => {
     server.use(
       http.get('https://pokeapi.co/api/v2/pokemon/:name', () =>
