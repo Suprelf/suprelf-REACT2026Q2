@@ -13,16 +13,29 @@ const request = async <T>(url: string): Promise<T> => {
     throw new Error(`Request failed: ${res.status}`);
   }
 
-  const data: T = await res.json();
-  return data;
+  return res.json();
 };
 
-export const fetchPokemonList = async (limit = 10): Promise<Pokemon[]> => {
+
+export const fetchPokemonList = async (
+  limit = 10,
+  offset = 0
+): Promise<Pokemon[]> => {
   const data = await request<PokemonListResponse>(
-    `${API_URL}/pokemon?limit=${limit}&offset=0`
+    `${API_URL}/pokemon?limit=${limit}&offset=${offset}`
   );
 
-  return data.results;
+  return Promise.all(
+    data.results.map(async (p) => {
+      const details = await request<any>(p.url);
+
+      return {
+        name: details.name,
+        url: p.url,
+        image: details.sprites.front_default,
+      };
+    })
+  );
 };
 
 export const fetchPokemon = async (name: string): Promise<Pokemon> => {
@@ -33,19 +46,29 @@ export const fetchPokemon = async (name: string): Promise<Pokemon> => {
   return {
     name: data.name,
     url: `${API_URL}/pokemon/${data.name}`,
+    image: data.sprites.front_default,
   };
 };
 
-export const fetchPokemonTerm = async (
-  name: string,
-  limit: number = 9
-): Promise<Pokemon[]> => {
-  const [selected, list] = await Promise.all([
-    fetchPokemon(name),
-    fetchPokemonList(limit),
+export const fetchPokemonDetails = async (name: string) => {
+  const [pokemon, species] = await Promise.all([
+    request<any>(`${API_URL}/pokemon/${name.toLowerCase()}`),
+    request<any>(`${API_URL}/pokemon-species/${name.toLowerCase()}`),
   ]);
 
-  const others = list.filter((p) => p.name !== selected.name).slice(0, limit);
+  const english = species.flavor_text_entries.filter(
+    (e: any) => e.language.name === 'en'
+  );
 
-  return [selected, ...others];
+  const flavor =
+    english.length > 0
+      ? english[english.length - 1].flavor_text
+      : '';
+
+  return {
+    id: pokemon.id,
+    name: pokemon.name,
+    image: pokemon.sprites.front_default,
+    flavorText: flavor.replace(/\n|\f/g, ' '),
+  };
 };
