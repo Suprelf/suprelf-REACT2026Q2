@@ -1,68 +1,60 @@
-import React, { Component } from 'react';
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+
 import './searchBar.css';
+
+import { useLocalStorage } from '../../hooks/useLocalStorage';
+import ErrorButton from '../errorButton/errorButton';
 
 type Props = {
   onSearch: (value: string) => void;
 };
 
-type State = {
-  inputValue: string;
-};
+const SearchBar = ({ onSearch }: Props) => {
+  const [storedValue, setStoredValue] = useLocalStorage('last', '');
+  const [inputValue, setInputValue] = useState('');
 
-class SearchBar extends Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
+  useEffect(() => {
+    setInputValue(storedValue);
+  }, [storedValue]);
 
-    this.state = {
-      inputValue: '',
-    };
-  }
-
-  componentDidMount(): void {
-    const savedValue = localStorage.getItem('last');
-    if (savedValue) {
-      this.setState({ inputValue: savedValue });
-    }
-  }
-
-  handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-
-    this.setState({ inputValue: value });
+  const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(e.target.value);
   };
 
-  handleSearch = () => {
-    const trimmed = this.state.inputValue.trim();
+  const handleSearch = () => {
+    const trimmed = inputValue.trim();
 
-    if (!trimmed) return;
+    if (!trimmed || trimmed === storedValue) return;
 
-    const currentLocalValue = localStorage.getItem('last') ?? '';
-
-    if (trimmed === currentLocalValue) return;
-
-    localStorage.setItem('last', trimmed);
-    this.props.onSearch(trimmed);
+    setStoredValue(trimmed);
+    onSearch(trimmed);
   };
 
-  render() {
-    return (
-      <div className="main-container">
-        <div className="search-container">
-          <input
-            type="text"
-            placeholder="Search here"
-            className="search-input"
-            value={this.state.inputValue}
-            onChange={this.handleInput}
-          ></input>
+  return (
+    <div className="main-container">
+      <div className="search-container">
+        <input
+          value={inputValue}
+          onChange={handleInput}
+          placeholder="Search here"
+          className="search-input"
+        />
 
-          <button onClick={this.handleSearch} className="search-button">
-            Search
-          </button>
-        </div>
+        <button onClick={handleSearch} className="search-button">
+          Search
+        </button>
       </div>
-    );
-  }
-}
+
+      <div className="app-buttons">
+        <Link className="about-link search-button" to="/about">
+          About
+        </Link>
+
+        <ErrorButton />
+      </div>
+    </div>
+  );
+};
 
 export default SearchBar;

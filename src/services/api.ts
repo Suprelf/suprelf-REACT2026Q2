@@ -2,6 +2,9 @@ import type {
   Pokemon,
   PokemonListResponse,
   PokemonApiResponse,
+  PokemonDetails,
+  PokemonDetailsResponse,
+  PokemonSpeciesResponse,
 } from '../types/types';
 
 const API_URL = 'https://pokeapi.co/api/v2';
@@ -16,7 +19,6 @@ const request = async <T>(url: string): Promise<T> => {
   return res.json();
 };
 
-
 export const fetchPokemonList = async (
   limit = 10,
   offset = 0
@@ -26,19 +28,21 @@ export const fetchPokemonList = async (
   );
 
   return Promise.all(
-    data.results.map(async (p) => {
-      const details = await request<any>(p.url);
+    data.results.map(async (pokemon) => {
+      const details = await request<PokemonDetailsResponse>(pokemon.url);
 
       return {
         name: details.name,
-        url: p.url,
+        url: pokemon.url,
         image: details.sprites.front_default,
       };
     })
   );
 };
 
-export const fetchPokemon = async (name: string): Promise<Pokemon> => {
+export const fetchPokemon = async (
+  name: string
+): Promise<Pokemon> => {
   const data = await request<PokemonApiResponse>(
     `${API_URL}/pokemon/${name.toLowerCase()}`
   );
@@ -50,14 +54,20 @@ export const fetchPokemon = async (name: string): Promise<Pokemon> => {
   };
 };
 
-export const fetchPokemonDetails = async (name: string) => {
+export const fetchPokemonDetails = async (
+  name: string
+): Promise<PokemonDetails> => {
   const [pokemon, species] = await Promise.all([
-    request<any>(`${API_URL}/pokemon/${name.toLowerCase()}`),
-    request<any>(`${API_URL}/pokemon-species/${name.toLowerCase()}`),
+    request<PokemonDetailsResponse>(
+      `${API_URL}/pokemon/${name.toLowerCase()}`
+    ),
+    request<PokemonSpeciesResponse>(
+      `${API_URL}/pokemon-species/${name.toLowerCase()}`
+    ),
   ]);
 
   const english = species.flavor_text_entries.filter(
-    (e: any) => e.language.name === 'en'
+    (entry) => entry.language.name === 'en'
   );
 
   const flavor =

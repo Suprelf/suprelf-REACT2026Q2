@@ -1,88 +1,186 @@
+import { describe, it, expect } from 'vitest';
 import { http, HttpResponse } from 'msw';
-import { describe, expect, it } from 'vitest';
 
-import { fetchPokemon, fetchPokemonList, fetchPokemonTerm } from './api';
-import type { Pokemon } from '../types/types';
+import { fetchPokemon, fetchPokemonList, fetchPokemonDetails } from './api';
+
 import { server } from '../test-utils/server';
 
+const spriteMock = {
+  sprites: {
+    front_default: 'https://img.png',
+  },
+};
+
+const speciesMock = {
+  flavor_text_entries: [
+    {
+      flavor_text: 'hello\nworld\ftext',
+      language: { name: 'en' },
+    },
+  ],
+};
+
 describe('fetchPokemonList', () => {
-  it('return list of pokemons of correct length', async () => {
-    const result: Pokemon[] = await fetchPokemonList(5);
+  it('returns correct number of pokemons with full structure', async () => {
+    server.use(
+      http.get('https://pokeapi.co/api/v2/pokemon', ({ request }) => {
+        const url = new URL(request.url);
+        const limit = Number(url.searchParams.get('limit') || 3);
 
-    expect(result).toHaveLength(5);
+        return HttpResponse.json({
+          results: Array.from({ length: limit }).map((_, i) => ({
+            name: `pokemon-${i}`,
+            url: `https://pokeapi.co/api/v2/pokemon/pokemon-${i}`,
+          })),
+        });
+      }),
 
-    result.forEach((item) => {
-      expect(item).toEqual({
+      http.get('https://pokeapi.co/api/v2/pokemon/:name', ({ params }) => {
+        return HttpResponse.json({
+          name: params.name,
+          sprites: {
+            front_default: 'img.png',
+          },
+        });
+      })
+    );
+
+    const result = await fetchPokemonList(3);
+
+    expect(result).toHaveLength(3);
+
+    result.forEach((p) => {
+      expect(p).toEqual({
         name: expect.any(String),
         url: expect.any(String),
+        image: expect.any(String),
       });
     });
   });
 
-  it('throw error on server failure', async () => {
+  it('handles server error', async () => {
     server.use(
       http.get('https://pokeapi.co/api/v2/pokemon', () => {
         return new HttpResponse(null, { status: 500 });
       })
     );
 
-    await expect(fetchPokemonList()).rejects.toThrow('Request failed');
+    await expect(fetchPokemonList()).rejects.toThrow('Request failed: 500');
   });
 });
 
 describe('fetchPokemon', () => {
-  it('return pokemon object', async () => {
+  it('returns pokemon with correct structure', async () => {
+    server.use(
+      http.get('https://pokeapi.co/api/v2/pokemon/:name', () => {
+        return HttpResponse.json({
+          name: 'pikachu',
+          sprites: { front_default: 'img.png' },
+        });
+      })
+    );
+
     const result = await fetchPokemon('pikachu');
 
-    expect(result).toEqual({
-      name: 'pikachu',
-      url: 'https://pokeapi.co/api/v2/pokemon/pikachu',
-    });
+    expect(result.name).toBe('pikachu');
+    expect(result.url).toContain('pikachu');
+    expect(result.image).toBeTruthy();
   });
 
-  it('format uppercase input to lowercase', async () => {
+  it('normalizes uppercase input to lowercase', async () => {
+    server.use(
+      http.get('https://pokeapi.co/api/v2/pokemon/:name', ({ params }) => {
+        return HttpResponse.json({
+          name: String(params.name).toLowerCase(),
+          sprites: { front_default: 'img.png' },
+        });
+      })
+    );
+
     const result = await fetchPokemon('PikACHU');
 
     expect(result.name).toBe('pikachu');
   });
 
-  it('throw error when pokemon not found', async () => {
+  it('throws error on 404', async () => {
     server.use(
-      http.get('https://pokeapi.co/api/v2/pokemon/:name', () => {
-        return new HttpResponse(null, { status: 404 });
-      })
+      http.get(
+        'https://pokeapi.co/api/v2/pokemon/:name',
+        () => new HttpResponse(null, { status: 404 })
+      )
     );
 
-    await expect(fetchPokemon('invalid')).rejects.toThrow('Request failed');
+    await expect(fetchPokemon('invalid')).rejects.toThrow(
+      'Request failed: 404'
+    );
   });
 });
 
-describe('fetchPokemonTerm', () => {
-  it('return selected pokemon first', async () => {
-    const result = await fetchPokemonTerm('pokemon-1', 3);
+describe('fetchPokemonDetails', () => {
+  it('returns full pokemon details', async () => {
+    server.use(
+      http.get('https://pokeapi.co/api/v2/pokemon/:name', () =>
+        HttpResponse.json({
+          id: 1,
+          name: 'pikachu',
+          sprites: { front_default: 'img.png' },
+        })
+      ),
 
-    expect(result[0].name).toBe('pokemon-1');
+      http.get('https://pokeapi.co/api/v2/pokemon-species/:name', () =>
+        HttpResponse.json(speciesMock)
+      )
+    );
+
+    const result = await fetchPokemonDetails('pikachu');
+
+    expect(result).toEqual({
+      id: expect.any(Number),
+      name: 'pikachu',
+      image: expect.any(String),
+      flavorText: expect.any(String),
+    });
   });
 
-  it('get exact limit of results', async () => {
-    const result = await fetchPokemonTerm('pokemon-1', 2);
+  it('cleans flavor text', async () => {
+    server.use(
+      http.get('https://pokeapi.co/api/v2/pokemon/:name', () =>
+        HttpResponse.json({
+          id: 1,
+          name: 'pikachu',
+          sprites: { front_default: 'img.png' },
+        })
+      ),
 
-    expect(result.length).toBe(2);
+      http.get('https://pokeapi.co/api/v2/pokemon-species/:name', () =>
+        HttpResponse.json(speciesMock)
+      )
+    );
+
+    const result = await fetchPokemonDetails('pikachu');
+
+    expect(result.flavorText).not.toMatch(/\n|\f/);
   });
 
-  it('exclude selected pokemon from list', async () => {
-    const result = await fetchPokemonTerm('pokemon-1', 5);
+  it('returns empty flavorText if no english entries exist', async () => {
+    server.use(
+      http.get('https://pokeapi.co/api/v2/pokemon/:name', () =>
+        HttpResponse.json({
+          id: 1,
+          name: 'pikachu',
+          sprites: { front_default: 'img.png' },
+        })
+      ),
 
-    const others = result.slice(1);
+      http.get('https://pokeapi.co/api/v2/pokemon-species/:name', () =>
+        HttpResponse.json({
+          flavor_text_entries: [],
+        })
+      )
+    );
 
-    expect(others.every((p) => p.name !== 'pokemon-1')).toBe(true);
-  });
+    const result = await fetchPokemonDetails('pikachu');
 
-  it('handle minimal limit correctly', async () => {
-    const result = await fetchPokemonTerm('pokemon-1', 1);
-
-    expect(result[0].name).toBe('pokemon-1');
-
-    expect(result.length).toBeGreaterThanOrEqual(1);
+    expect(result.flavorText).toBe('');
   });
 });

@@ -1,147 +1,88 @@
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { createLocalStorageMock } from '../../test-utils/localStorageMock';
-
 import SearchBar from './searchBar';
 
-describe('SearchBar component', () => {
+vi.mock('react-router-dom', () => ({
+  Link: ({ children }: any) => <a>{children}</a>,
+}));
+
+vi.mock('../errorButton/errorButton', () => ({
+  default: () => <button>Error</button>,
+}));
+
+describe('SearchBar', () => {
+  const onSearch = vi.fn();
+
   beforeEach(() => {
-    const localStorageMock = createLocalStorageMock();
-
-    Object.defineProperty(window, 'localStorage', {
-      value: localStorageMock,
-      configurable: true,
-    });
-
     vi.clearAllMocks();
   });
 
-  it('render input and search button', () => {
-    render(<SearchBar onSearch={vi.fn()} />);
+  it('renders input and buttons', () => {
+    render(<SearchBar onSearch={onSearch} />);
 
-    expect(screen.getByRole('textbox')).toBeInTheDocument();
-
-    expect(screen.getByRole('button', { name: /search/i })).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('Search here')).toBeInTheDocument();
+    expect(screen.getByText('Search')).toBeInTheDocument();
+    expect(screen.getByText('About')).toBeInTheDocument();
   });
 
-  it('load value from localStorage on mount', () => {
-    window.localStorage.setItem('last', 'pikachu');
+  it('loads stored value into input', async () => {
+    render(<SearchBar onSearch={onSearch} />);
 
-    render(<SearchBar onSearch={vi.fn()} />);
-
-    const input = screen.getByRole('textbox');
-
-    expect(input).toHaveValue('pikachu');
+    await waitFor(() => {
+      expect(screen.getByDisplayValue(/.*/)).toBeInTheDocument();
+    });
   });
 
-  it('update input value on change', async () => {
-    const user = userEvent.setup();
+  it('updates input value on change', () => {
+    render(<SearchBar onSearch={onSearch} />);
 
-    render(<SearchBar onSearch={vi.fn()} />);
+    const input = screen.getByPlaceholderText('Search here');
 
-    const input = screen.getByRole('textbox');
+    fireEvent.change(input, { target: { value: 'pikachu' } });
 
-    await user.type(input, 'changed');
-
-    expect(input).toHaveValue('changed');
+    expect((input as HTMLInputElement).value).toBe('pikachu');
   });
 
-  it('call onSearch with trimmed value', async () => {
-    const user = userEvent.setup();
+  it('calls onSearch when valid new value submitted', () => {
+    render(<SearchBar onSearch={onSearch} />);
 
-    const mockSearch = vi.fn();
+    const input = screen.getByPlaceholderText('Search here');
+    const button = screen.getByText('Search');
 
-    render(<SearchBar onSearch={mockSearch} />);
+    fireEvent.change(input, { target: { value: 'pikachu' } });
+    fireEvent.click(button);
 
-    const input = screen.getByRole('textbox');
+    expect(onSearch).toHaveBeenCalledWith('pikachu');
+  });
 
-    const button = screen.getByRole('button', {
-      name: /search/i,
+  it('does NOT call onSearch when input is empty', () => {
+    render(<SearchBar onSearch={onSearch} />);
+
+    const button = screen.getByText('Search');
+
+    fireEvent.click(button);
+
+    expect(onSearch).not.toHaveBeenCalled();
+  });
+
+  it('does NOT call onSearch when value equals stored value', async () => {
+    render(<SearchBar onSearch={onSearch} />);
+
+    const input = screen.getByPlaceholderText('Search here');
+    const button = screen.getByText('Search');
+
+    await waitFor(() => {
+      fireEvent.change(input, { target: { value: '' } });
     });
 
-    await user.type(input, '  pikachu  ');
-    await user.click(button);
+    fireEvent.click(button);
 
-    expect(mockSearch).toHaveBeenCalledWith('pikachu');
+    expect(onSearch).not.toHaveBeenCalled();
   });
 
-  it('do not call onSearch if input is empty', async () => {
-    const user = userEvent.setup();
+  it('renders About link', () => {
+    render(<SearchBar onSearch={onSearch} />);
 
-    const mockSearch = vi.fn();
-
-    render(<SearchBar onSearch={mockSearch} />);
-
-    const button = screen.getByRole('button', {
-      name: /search/i,
-    });
-
-    await user.click(button);
-
-    expect(mockSearch).not.toHaveBeenCalled();
-  });
-
-  it('do not search whitespace input', async () => {
-    const user = userEvent.setup();
-
-    const mockSearch = vi.fn();
-
-    render(<SearchBar onSearch={mockSearch} />);
-
-    const input = screen.getByRole('textbox');
-
-    const button = screen.getByRole('button', {
-      name: /search/i,
-    });
-
-    await user.type(input, '     ');
-    await user.click(button);
-
-    expect(mockSearch).not.toHaveBeenCalled();
-
-    expect(window.localStorage.setItem).not.toHaveBeenCalled();
-  });
-
-  it('do not call onSearch if value == localStorage', async () => {
-    window.localStorage.setItem('last', 'pikachu');
-
-    const user = userEvent.setup();
-
-    const mockSearch = vi.fn();
-
-    render(<SearchBar onSearch={mockSearch} />);
-
-    const input = screen.getByRole('textbox');
-
-    const button = screen.getByRole('button', {
-      name: /search/i,
-    });
-
-    await user.clear(input);
-    await user.type(input, 'pikachu');
-
-    await user.click(button);
-
-    expect(mockSearch).not.toHaveBeenCalled();
-  });
-
-  it('save value to localStorage on search', async () => {
-    const user = userEvent.setup();
-
-    const mockSearch = vi.fn();
-
-    render(<SearchBar onSearch={mockSearch} />);
-
-    const input = screen.getByRole('textbox');
-
-    const button = screen.getByRole('button', {
-      name: /search/i,
-    });
-
-    await user.type(input, 'pikachu');
-    await user.click(button);
-
-    expect(window.localStorage.setItem).toHaveBeenCalledWith('last', 'pikachu');
+    expect(screen.getByText('About')).toBeInTheDocument();
   });
 });

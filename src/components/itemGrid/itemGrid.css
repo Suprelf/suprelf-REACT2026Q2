@@ -40,7 +40,6 @@
   background-color: rgba(30, 30, 30, 0.1);
 }
 
-
 .layout {
   display: flex;
 
@@ -56,8 +55,7 @@
 
   display: grid;
 
-  grid-template-columns: repeat(auto-fill,
-      minmax(160px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
 
   gap: 24px;
 
@@ -96,7 +94,7 @@
   height: 424px;
   flex-shrink: 0;
 
-   box-sizing: border-box;
+  box-sizing: border-box;
 
   background: white;
   border-radius: 6px;

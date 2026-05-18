@@ -1,7 +1,6 @@
 import { http, HttpResponse } from 'msw';
-import type { Pokemon, PokemonListResponse } from '../types/types';
 
-const createPokemon = (name: string): Pokemon => ({
+const createPokemon = (name: string) => ({
   name,
   url: `https://pokeapi.co/api/v2/pokemon/${name}`,
 });
@@ -11,19 +10,12 @@ export const handlers = [
     const url = new URL(request.url);
 
     const limit = Number(url.searchParams.get('limit') || 10);
-    const search = url.searchParams.get('name');
 
-    if (search) {
-      return HttpResponse.json(createPokemon(search));
-    }
-
-    const data: PokemonListResponse = {
+    return HttpResponse.json({
       results: Array.from({ length: limit }).map((_, i) =>
         createPokemon(`pokemon-${i}`)
       ),
-    };
-
-    return HttpResponse.json(data);
+    });
   }),
 
   http.get('https://pokeapi.co/api/v2/pokemon/:name', ({ params }) => {
@@ -32,6 +24,20 @@ export const handlers = [
     return HttpResponse.json({
       name,
       url: `https://pokeapi.co/api/v2/pokemon/${name}`,
+      sprites: {
+        front_default: `https://img.poke/${name}.png`,
+      },
+    });
+  }),
+
+  http.get('https://pokeapi.co/api/v2/pokemon-species/:name', () => {
+    return HttpResponse.json({
+      flavor_text_entries: [
+        {
+          flavor_text: 'test\nflavor\ftext',
+          language: { name: 'en' },
+        },
+      ],
     });
   }),
 ];
