@@ -1,7 +1,8 @@
 import './itemCard.css';
-import { useState } from 'react';
 
 import type { Pokemon } from '../../types/types';
+
+import { usePokemonStore } from '../../store/store';
 
 type Props = {
   pokemon: Pokemon;
@@ -9,14 +10,16 @@ type Props = {
 };
 
 const ItemCard = ({ pokemon, onSelect }: Props) => {
-  const [isSelected, setIsSelected] = useState(false);
+  const togglePokemon = usePokemonStore(
+    (state) => state.togglePokemon
+  );
+
+  const isMarked = usePokemonStore(
+    (state) => state.isSelected(pokemon.name)
+  );
 
   const formatName = (name: string) =>
     name.charAt(0).toUpperCase() + name.slice(1);
-
-  const toggleSelect = () => {
-    setIsSelected((prev) => !prev);
-  };
 
   return (
     <div
@@ -26,17 +29,17 @@ const ItemCard = ({ pokemon, onSelect }: Props) => {
     >
       <input
         type="checkbox"
-        checked={isSelected}
-        onChange={(e) => {
-          toggleSelect();
-        }}
-        onClick={(e) => {
-          e.stopPropagation();
-        }}
+        checked={isMarked}
+        onChange={() => togglePokemon(pokemon)}
+        onClick={(e) => e.stopPropagation()}
         className="card-checkbox"
       />
 
-      <img className="img-card" src={pokemon.image} alt={pokemon.name} />
+      <img
+        className="img-card"
+        src={pokemon.image}
+        alt={pokemon.name}
+      />
 
       <div>{formatName(pokemon.name)}</div>
     </div>

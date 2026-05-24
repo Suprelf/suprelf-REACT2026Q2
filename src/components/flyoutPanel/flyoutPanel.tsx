@@ -1,16 +1,36 @@
 import './flyoutPanel.css';
 
-const FlyoutPanel = () => {
-  const selected = [];
+import { usePokemonStore } from '../../store/store';
+import { generatePokemonCSV } from '../../services/exportCSV';
 
-  //if (selected.length === 0) return null;
+const FlyoutPanel = () => {
+  const selectedPokemons = usePokemonStore(
+    (state) => state.selectedPokemons
+  );
+
+  const clearSelected = usePokemonStore(
+    (state) => state.clearSelected
+  );
+
+  if (selectedPokemons.length === 0) return null;
 
   return (
     <div className="flyout">
-      Selected: {selected.length}
+      <div>
+        Selected: {selectedPokemons.length}
+      </div>
 
-      <button className='search-button'>Unselect all</button>
-      <button className='search-button'>Download CSV</button>
+      <button
+        className="search-button"
+        onClick={clearSelected}
+      >
+        Unselect all
+      </button>
+
+      <button className="search-button"
+      onClick={() => generatePokemonCSV(selectedPokemons)}>
+        Download CSV
+      </button>
     </div>
   );
 };
