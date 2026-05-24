@@ -10,18 +10,23 @@
   grid-template-columns: 1fr 2fr;
   align-items: center;
   column-gap: 20px;
+
+  color: var(--text-color);
 }
 
 .table-header {
   text-shadow: 2px 2px 4px #00000030;
+  color: var(--text-color);
 }
 
 .item-name {
   font-weight: 500;
+  color: var(--text-color);
 }
 
 .item-desc {
   font-weight: 500;
+  color: var(--text-color);
 }
 
 .hr-header {
@@ -42,23 +47,16 @@
 
 .layout {
   display: flex;
-
   gap: 24px;
-
   width: 100%;
-
   align-items: center;
 }
 
 .grid-container {
   flex: 1;
-
   display: grid;
-
   grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-
   gap: 24px;
-
   justify-content: center;
 }
 
@@ -68,9 +66,9 @@
 
   box-sizing: border-box;
 
-  background: whitesmoke;
+  background: var(--card-bg);
   border-radius: 4px;
-  box-shadow: 2px 2px 7px rgb(0 0 0 / 30%);
+  box-shadow: var(--card-shadow);
   cursor: pointer;
 
   padding: 8px;
@@ -79,14 +77,16 @@
   flex-direction: column;
   gap: 24px;
   align-items: center;
+
+  color: var(--text-color);
 }
 
 .grid-item:hover {
-  background-color: rgb(237, 237, 237);
+  background-color: var(--button-hover);
 }
 
 .grid-item:active {
-  background-color: rgb(231, 231, 231);
+  background-color: var(--button-active, var(--button-hover));
 }
 
 .details-panel {
@@ -96,9 +96,9 @@
 
   box-sizing: border-box;
 
-  background: white;
+  background: var(--card-bg);
   border-radius: 6px;
-  box-shadow: 2px 2px 7px rgb(0 0 0 / 30%);
+  box-shadow: var(--card-shadow);
 
   padding: 16px;
 
@@ -108,6 +108,8 @@
   align-items: center;
 
   overflow: auto;
+
+  color: var(--text-color);
 }
 
 .img-card {

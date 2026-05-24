@@ -1,0 +1,12 @@
+.switch-button {
+  width: 56px;
+  height: 56px;
+  padding: 18px;
+  border: none;
+  border-radius: 4px;
+  box-shadow: var(--card-shadow);
+  outline: none;
+
+  background-color: var(--button-bg);
+  color: var(--text-color);
+}

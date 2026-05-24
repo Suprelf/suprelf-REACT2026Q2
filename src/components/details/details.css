@@ -6,9 +6,9 @@
   width: 320px;
   height: 424px;
 
-  background: whitesmoke;
+  background: var(--card-bg);
   border-radius: 4px;
-  box-shadow: 2px 2px 7px rgb(0 0 0 / 30%);
+  box-shadow: var(--card-shadow);
 
   display: flex;
   flex-direction: column;
@@ -37,4 +37,6 @@
   line-height: 1;
 
   z-index: 10;
+
+  color: var(--text-color);
 }

@@ -5,6 +5,7 @@ import './searchBar.css';
 
 import { useLocalStorage } from '../../hooks/useLocalStorage';
 import ErrorButton from '../errorButton/errorButton';
+import ThemeSwitch from '../themeSwitch/themeSwitch';
 
 type Props = {
   onSearch: (value: string) => void;
@@ -52,6 +53,8 @@ const SearchBar = ({ onSearch }: Props) => {
         </Link>
 
         <ErrorButton />
+
+        <ThemeSwitch></ThemeSwitch>
       </div>
     </div>
   );
