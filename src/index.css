@@ -8,6 +8,8 @@
   --flyout-bg: #ffffff;
   --button-bg: whitesmoke;
   --button-hover: rgb(237, 237, 237);
+
+  --control-height: 56px;
 }
 
 [data-theme='dark'] {
