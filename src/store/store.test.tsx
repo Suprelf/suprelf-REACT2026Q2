@@ -1,19 +1,10 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 
 import { usePokemonStore } from './store';
+import { mockData } from '../test-utils/tableCorrectDataMock';
 
 describe('store', () => {
-  const pikachu = {
-    name: 'pikachu',
-    url: 'https://pokeapi.co/pikachu',
-    image: 'pikachu.png',
-  };
-
-  const bulbasaur = {
-    name: 'bulbasaur',
-    url: 'https://pokeapi.co/bulbasaur',
-    image: 'bulbasaur.png',
-  };
+  const [pikachu, bulbasaur] = mockData;
 
   beforeEach(() => {
     usePokemonStore.setState({
