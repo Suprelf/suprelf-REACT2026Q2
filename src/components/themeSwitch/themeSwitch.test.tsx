@@ -17,9 +17,7 @@ describe('ThemeSwitch', () => {
 
     render(<ThemeSwitch />);
 
-    expect(
-      screen.getByRole('button')
-    ).toHaveTextContent('☽');
+    expect(screen.getByRole('button')).toHaveTextContent('☽');
   });
 
   it('should render dark theme icon', () => {
@@ -31,9 +29,7 @@ describe('ThemeSwitch', () => {
 
     render(<ThemeSwitch />);
 
-    expect(
-      screen.getByRole('button')
-    ).toHaveTextContent('☼');
+    expect(screen.getByRole('button')).toHaveTextContent('☼');
   });
 
   it('should call toggleTheme on click', async () => {

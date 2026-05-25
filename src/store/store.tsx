@@ -7,15 +7,11 @@ export const usePokemonStore = create<PokemonStore>((set, get) => ({
   togglePokemon: (pokemon) => {
     const selected = get().selectedPokemons;
 
-    const exists = selected.some(
-      (p) => p.name === pokemon.name
-    );
+    const exists = selected.some((p) => p.name === pokemon.name);
 
     if (exists) {
       set({
-        selectedPokemons: selected.filter(
-          (p) => p.name !== pokemon.name
-        ),
+        selectedPokemons: selected.filter((p) => p.name !== pokemon.name),
       });
     } else {
       set({
@@ -25,9 +21,7 @@ export const usePokemonStore = create<PokemonStore>((set, get) => ({
   },
 
   isSelected: (name) => {
-    return get().selectedPokemons.some(
-      (p) => p.name === name
-    );
+    return get().selectedPokemons.some((p) => p.name === name);
   },
 
   clearSelected: () => {

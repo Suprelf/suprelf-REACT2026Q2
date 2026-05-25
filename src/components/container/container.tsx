@@ -181,7 +181,7 @@ const Container = () => {
         </div>
       )}
 
-      <FlyoutPanel/>
+      <FlyoutPanel />
     </div>
   );
 };

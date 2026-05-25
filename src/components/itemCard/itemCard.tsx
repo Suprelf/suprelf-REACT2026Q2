@@ -10,13 +10,9 @@ type Props = {
 };
 
 const ItemCard = ({ pokemon, onSelect }: Props) => {
-  const togglePokemon = usePokemonStore(
-    (state) => state.togglePokemon
-  );
+  const togglePokemon = usePokemonStore((state) => state.togglePokemon);
 
-  const isMarked = usePokemonStore(
-    (state) => state.isSelected(pokemon.name)
-  );
+  const isMarked = usePokemonStore((state) => state.isSelected(pokemon.name));
 
   const formatName = (name: string) =>
     name.charAt(0).toUpperCase() + name.slice(1);
@@ -35,11 +31,7 @@ const ItemCard = ({ pokemon, onSelect }: Props) => {
         className="card-checkbox"
       />
 
-      <img
-        className="img-card"
-        src={pokemon.image}
-        alt={pokemon.name}
-      />
+      <img className="img-card" src={pokemon.image} alt={pokemon.name} />
 
       <div>{formatName(pokemon.name)}</div>
     </div>

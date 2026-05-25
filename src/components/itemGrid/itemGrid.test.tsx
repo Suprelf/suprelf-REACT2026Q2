@@ -44,4 +44,3 @@ describe('ItemGrid', () => {
     expect(screen.getByText('Bulbasaur')).toBeInTheDocument();
   });
 });
-

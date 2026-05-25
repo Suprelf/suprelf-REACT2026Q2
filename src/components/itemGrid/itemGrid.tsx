@@ -9,7 +9,6 @@ type Props = {
 };
 
 const ItemGrid = ({ listData, onSelect }: Props) => {
-  
   return (
     <div className="grid-container">
       {listData.map((pokemon) => (

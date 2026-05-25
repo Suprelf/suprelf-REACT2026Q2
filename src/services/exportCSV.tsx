@@ -10,8 +10,8 @@ export const generatePokemonCSV = async (data: Pokemon[]) => {
         id: details.id,
         name: p.name,
         description: details.flavorText,
-        image: p.image
-      }
+        image: p.image,
+      };
     })
   );
 

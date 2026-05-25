@@ -14,7 +14,7 @@ vi.mock('../../services/exportCSV');
 const mockClearSelected = vi.fn();
 const mockGenerateCSV = vi.fn();
 
-const pokemon = mockData[0]
+const pokemon = mockData[0];
 
 describe('flyoutPanel', () => {
   it('should not render when no selected pokemons', () => {
@@ -46,9 +46,7 @@ describe('flyoutPanel', () => {
 
     render(<FlyoutPanel />);
 
-    expect(
-      screen.getByText('Selected: 1')
-    ).toBeInTheDocument();
+    expect(screen.getByText('Selected: 1')).toBeInTheDocument();
   });
 
   it('should call clearSelected on click', async () => {
@@ -66,9 +64,7 @@ describe('flyoutPanel', () => {
 
     render(<FlyoutPanel />);
 
-    await user.click(
-      screen.getByText('Unselect all')
-    );
+    await user.click(screen.getByText('Unselect all'));
 
     expect(mockClearSelected).toHaveBeenCalledTimes(1);
   });
@@ -86,15 +82,11 @@ describe('flyoutPanel', () => {
         })
     );
 
-    vi.mocked(generatePokemonCSV).mockImplementation(
-      mockGenerateCSV
-    );
+    vi.mocked(generatePokemonCSV).mockImplementation(mockGenerateCSV);
 
     render(<FlyoutPanel />);
 
-    await user.click(
-      screen.getByText('Download CSV')
-    );
+    await user.click(screen.getByText('Download CSV'));
 
     expect(mockGenerateCSV).toHaveBeenCalledTimes(1);
   });
