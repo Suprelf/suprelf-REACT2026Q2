@@ -1,9 +1,10 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import SearchBar from './searchBar';
+import ThemeSwitch from '../themeSwitch/themeSwitch';
 
 vi.mock('react-router-dom', () => ({
-  Link: ({ children }: any) => <a>{children}</a>,
+  Link: ({ children }: { children: React.ReactNode }) => <a>{children}</a>,
 }));
 
 vi.mock('../errorButton/errorButton', () => ({
@@ -84,5 +85,13 @@ describe('SearchBar', () => {
     render(<SearchBar onSearch={onSearch} />);
 
     expect(screen.getByText('About')).toBeInTheDocument();
+  });
+
+  it('renders theme switch button', () => {
+    render(<ThemeSwitch></ThemeSwitch>);
+
+    expect(
+      screen.queryByText('☽') || screen.queryByText('☼')
+    ).toBeInTheDocument();
   });
 });

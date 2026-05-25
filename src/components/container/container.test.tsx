@@ -10,7 +10,9 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 vi.mock('../../hooks/useLoader', () => ({
   useLoader: () => ({
     loading: false,
-    run: async (fn: any) => fn,
+    run: async <T,>(request: Promise<T>): Promise<T> => {
+      return await request;
+    },
   }),
 }));
 

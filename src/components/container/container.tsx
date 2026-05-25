@@ -16,6 +16,7 @@ import type { Pokemon, PokemonDetails } from '../../types/types';
 
 import { useLoader } from '../../hooks/useLoader';
 import { useLocalStorage } from '../../hooks/useLocalStorage';
+import FlyoutPanel from '../flyoutPanel/flyoutPanel';
 
 const Container = () => {
   const navigate = useNavigate();
@@ -179,6 +180,8 @@ const Container = () => {
           </button>
         </div>
       )}
+
+      <FlyoutPanel />
     </div>
   );
 };

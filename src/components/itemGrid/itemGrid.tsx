@@ -1,6 +1,7 @@
 import './itemGrid.css';
 
 import type { Pokemon } from '../../types/types';
+import ItemCard from '../itemCard/itemCard';
 
 type Props = {
   listData: Pokemon[];
@@ -8,21 +9,10 @@ type Props = {
 };
 
 const ItemGrid = ({ listData, onSelect }: Props) => {
-  const formatName = (name: string) =>
-    name.charAt(0).toUpperCase() + name.slice(1);
-
   return (
     <div className="grid-container">
       {listData.map((pokemon) => (
-        <div
-          key={pokemon.name}
-          className="grid-item"
-          onClick={() => onSelect(pokemon)}
-        >
-          <img className="img-card" src={pokemon.image} alt={pokemon.name} />
-
-          <div>{formatName(pokemon.name)}</div>
-        </div>
+        <ItemCard key={pokemon.name} pokemon={pokemon} onSelect={onSelect} />
       ))}
     </div>
   );

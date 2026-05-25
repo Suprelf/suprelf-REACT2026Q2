@@ -38,3 +38,13 @@ export type PokemonSpeciesResponse = {
     };
   }[];
 };
+
+export type PokemonStore = {
+  selectedPokemons: Pokemon[];
+
+  togglePokemon: (pokemon: Pokemon) => void;
+
+  isSelected: (name: string) => boolean;
+
+  clearSelected: () => void;
+};

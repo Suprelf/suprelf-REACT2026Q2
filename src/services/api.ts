@@ -40,9 +40,7 @@ export const fetchPokemonList = async (
   );
 };
 
-export const fetchPokemon = async (
-  name: string
-): Promise<Pokemon> => {
+export const fetchPokemon = async (name: string): Promise<Pokemon> => {
   const data = await request<PokemonApiResponse>(
     `${API_URL}/pokemon/${name.toLowerCase()}`
   );
@@ -58,9 +56,7 @@ export const fetchPokemonDetails = async (
   name: string
 ): Promise<PokemonDetails> => {
   const [pokemon, species] = await Promise.all([
-    request<PokemonDetailsResponse>(
-      `${API_URL}/pokemon/${name.toLowerCase()}`
-    ),
+    request<PokemonDetailsResponse>(`${API_URL}/pokemon/${name.toLowerCase()}`),
     request<PokemonSpeciesResponse>(
       `${API_URL}/pokemon-species/${name.toLowerCase()}`
     ),
@@ -71,9 +67,7 @@ export const fetchPokemonDetails = async (
   );
 
   const flavor =
-    english.length > 0
-      ? english[english.length - 1].flavor_text
-      : '';
+    english.length > 0 ? english[english.length - 1].flavor_text : '';
 
   return {
     id: pokemon.id,
