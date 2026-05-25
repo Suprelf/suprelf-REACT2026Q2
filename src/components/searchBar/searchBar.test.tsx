@@ -4,7 +4,7 @@ import SearchBar from './searchBar';
 import ThemeSwitch from '../themeSwitch/themeSwitch';
 
 vi.mock('react-router-dom', () => ({
-  Link: ({ children }: any) => <a>{children}</a>,
+  Link: ({ children }: { children: React.ReactNode }) => <a>{children}</a>,
 }));
 
 vi.mock('../errorButton/errorButton', () => ({
