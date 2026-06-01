@@ -6,6 +6,9 @@ import { useLocalStorage } from '../../hooks/useLocalStorage';
 import ErrorButton from '../errorButton/errorButton';
 import ThemeSwitch from '../themeSwitch/themeSwitch';
 
+import { pokemonKeys } from '../../services/queryKeys';
+import RefreshButton from '../refreshButton/refreshButton';
+
 type Props = {
   onSearch: (value: string) => void;
 };
@@ -28,6 +31,8 @@ const SearchBar = ({ onSearch }: Props) => {
   return (
     <div className="main-container">
       <div className="search-container">
+        <RefreshButton queryKey={pokemonKeys.all} />
+
         <input
           value={storedValue}
           onChange={handleInput}

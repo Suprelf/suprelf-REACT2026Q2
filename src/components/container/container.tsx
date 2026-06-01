@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useNavigate, useSearchParams, Outlet } from 'react-router-dom';
 import './container.css';
 
@@ -37,8 +36,11 @@ const Container = () => {
 
   const { name: selectedName } = useParams();
 
-  const { data: details, isLoading: detailsLoading, error: detailsError } =
-    usePokemonDetails(selectedName ?? '');
+  const {
+    data: details,
+    isLoading: detailsLoading,
+    error: detailsError,
+  } = usePokemonDetails(selectedName ?? '');
 
   const listQuery = usePokemonList(limit, offset);
   const baseList = listQuery.data ?? [];
@@ -85,10 +87,9 @@ const Container = () => {
     searchQuery.isLoading ||
     loaderLoading;
 
-  const error =
-    listQuery.error ||
-    searchQuery.error ||
-    detailsError;
+  const shouldShowDetails = !!selectedName;
+
+  const error = listQuery.error || searchQuery.error || detailsError;
 
   return (
     <div className="container">
@@ -101,9 +102,7 @@ const Container = () => {
       )}
 
       {error && !isLoading && (
-        <div className="error-message">
-          {getErrorMessage(error)}
-        </div>
+        <div className="error-message">{getErrorMessage(error)}</div>
       )}
 
       {!isLoading && (
@@ -111,7 +110,13 @@ const Container = () => {
           <ItemGrid listData={finalList} onSelect={handleSelect} />
 
           <div className="details-slot">
-            <Outlet context={{ details, detailsLoading, handleClose }} />
+            <Outlet
+              context={{
+                details: shouldShowDetails ? details : undefined,
+                detailsLoading,
+                handleClose,
+              }}
+            />
           </div>
         </div>
       )}

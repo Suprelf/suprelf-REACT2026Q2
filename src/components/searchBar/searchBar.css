@@ -82,7 +82,7 @@
   box-sizing: border-box;
 }
 
-.switch-button {
+.switch-button, .refresh-button {
   width: var(--control-height);
   height: var(--control-height);
 
