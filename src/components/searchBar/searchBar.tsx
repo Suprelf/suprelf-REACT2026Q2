@@ -37,7 +37,6 @@ const SearchBar = ({ onSearch }: Props) => {
   return (
     <div className="main-container">
       <div className="search-container">
-
         <RefreshButton queryKey={pokemonKeys.all}></RefreshButton>
 
         <input

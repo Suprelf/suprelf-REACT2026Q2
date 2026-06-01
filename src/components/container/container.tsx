@@ -89,14 +89,9 @@ const Container = () => {
     });
   };
 
-  const pageLoading =
-    listQuery.showLoader ||
-    searchQuery.showLoader;
+  const pageLoading = listQuery.showLoader || searchQuery.showLoader;
 
-  const error =
-    listQuery.error ||
-    searchQuery.error ||
-    detailsQuery.error;
+  const error = listQuery.error || searchQuery.error || detailsQuery.error;
 
   return (
     <div className="container">
@@ -110,18 +105,13 @@ const Container = () => {
 
       {error && !pageLoading && (
         <div className="error-message">
-          {error instanceof Error
-            ? error.message
-            : 'Something went wrong'}
+          {error instanceof Error ? error.message : 'Something went wrong'}
         </div>
       )}
 
       {!pageLoading && (
         <div className="layout">
-          <ItemGrid
-            listData={finalList}
-            onSelect={handleSelect}
-          />
+          <ItemGrid listData={finalList} onSelect={handleSelect} />
 
           <div className="details-slot">
             <Outlet
@@ -139,16 +129,12 @@ const Container = () => {
         <div className="paginator-buttons">
           <button
             className="paginator-button"
-            onClick={() =>
-              changePage(Math.max(page - 1, 1))
-            }
+            onClick={() => changePage(Math.max(page - 1, 1))}
           >
             ◀
           </button>
 
-          <div className="paginator-button">
-            {page}
-          </div>
+          <div className="paginator-button">{page}</div>
 
           <button
             className="paginator-button"

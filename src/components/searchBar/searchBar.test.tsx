@@ -121,4 +121,4 @@ describe('SearchBar', () => {
       screen.queryByText('☽') || screen.queryByText('☼')
     ).toBeInTheDocument();
   });
-})
+});

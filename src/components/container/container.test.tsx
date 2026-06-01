@@ -16,10 +16,7 @@ vi.mock('react-router-dom', async () => {
 
     useNavigate: () => mockNavigate,
 
-    useSearchParams: () => [
-      new URLSearchParams('page=1'),
-      mockSetSearchParams,
-    ],
+    useSearchParams: () => [new URLSearchParams('page=1'), mockSetSearchParams],
 
     useParams: () => ({}),
 
@@ -34,30 +31,21 @@ vi.mock('../../hooks/useLocalStorage', () => ({
 const mockUseMinLoadingQuery = vi.fn();
 
 vi.mock('../../hooks/useMinLoading', () => ({
-  useMinLoadingQuery: (...args: unknown[]) =>
-    mockUseMinLoadingQuery(...args),
+  useMinLoadingQuery: (...args: unknown[]) => mockUseMinLoadingQuery(...args),
 }));
 
 vi.mock('../searchBar/searchBar', () => ({
   default: ({ onSearch }: any) => (
-    <button onClick={() => onSearch('pikachu')}>
-      Search
-    </button>
+    <button onClick={() => onSearch('pikachu')}>Search</button>
   ),
 }));
 
 vi.mock('../itemGrid/itemGrid', () => ({
   default: ({ listData, onSelect }: any) => (
     <div>
-      <div data-testid="items-count">
-        {listData.length}
-      </div>
+      <div data-testid="items-count">{listData.length}</div>
 
-      <button
-        onClick={() =>
-          onSelect({ name: 'pikachu' })
-        }
-      >
+      <button onClick={() => onSelect({ name: 'pikachu' })}>
         Select Pokemon
       </button>
     </div>
@@ -97,9 +85,7 @@ describe('Container', () => {
   it('renders pokemon list', () => {
     render(<Container />);
 
-    expect(
-      screen.getByTestId('items-count')
-    ).toHaveTextContent('1');
+    expect(screen.getByTestId('items-count')).toHaveTextContent('1');
   });
 
   it('handles search', async () => {
@@ -107,13 +93,9 @@ describe('Container', () => {
 
     render(<Container />);
 
-    await user.click(
-      screen.getByText('Search')
-    );
+    await user.click(screen.getByText('Search'));
 
-    expect(mockSetLastSearch).toHaveBeenCalledWith(
-      'pikachu'
-    );
+    expect(mockSetLastSearch).toHaveBeenCalledWith('pikachu');
   });
 
   it('navigates to details page', async () => {
@@ -121,13 +103,9 @@ describe('Container', () => {
 
     render(<Container />);
 
-    await user.click(
-      screen.getByText('Select Pokemon')
-    );
+    await user.click(screen.getByText('Select Pokemon'));
 
-    expect(mockNavigate).toHaveBeenCalledWith(
-      '/details/pikachu?page=1'
-    );
+    expect(mockNavigate).toHaveBeenCalledWith('/details/pikachu?page=1');
   });
 
   it('shows loader', () => {
@@ -151,9 +129,7 @@ describe('Container', () => {
 
     render(<Container />);
 
-    expect(
-      screen.getByText('Loading...')
-    ).toBeInTheDocument();
+    expect(screen.getByText('Loading...')).toBeInTheDocument();
   });
 
   it('shows error message', () => {
@@ -177,8 +153,6 @@ describe('Container', () => {
 
     render(<Container />);
 
-    expect(
-      screen.getByText('API error')
-    ).toBeInTheDocument();
+    expect(screen.getByText('API error')).toBeInTheDocument();
   });
 });

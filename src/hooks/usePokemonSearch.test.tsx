@@ -39,9 +39,7 @@ describe('usePokemonSearch', () => {
       showLoader: false,
     };
 
-    vi.mocked(useMinLoadingQuery).mockReturnValue(
-      mockResult as any
-    );
+    vi.mocked(useMinLoadingQuery).mockReturnValue(mockResult as any);
 
     const result = usePokemonSearch('pikachu');
 

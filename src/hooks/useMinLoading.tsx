@@ -30,9 +30,7 @@ export const useMinLoadingQuery = <T,>({
 
   useEffect(() => {
     const shouldStartLoader =
-      query.isFetching &&
-      query.fetchStatus === 'fetching' &&
-      !query.data;
+      query.isFetching && query.fetchStatus === 'fetching' && !query.data;
 
     if (shouldStartLoader) {
       startRef.current = Date.now();
@@ -41,9 +39,7 @@ export const useMinLoadingQuery = <T,>({
     }
 
     if (!query.isFetching && showLoader) {
-      const elapsed = startRef.current
-        ? Date.now() - startRef.current
-        : 0;
+      const elapsed = startRef.current ? Date.now() - startRef.current : 0;
 
       const remaining = Math.max(minDelay - elapsed, 0);
 
@@ -58,13 +54,7 @@ export const useMinLoadingQuery = <T,>({
         clearTimeout(timeoutRef.current);
       }
     };
-  }, [
-    query.isFetching,
-    query.fetchStatus,
-    query.data,
-    showLoader,
-    minDelay,
-  ]);
+  }, [query.isFetching, query.fetchStatus, query.data, showLoader, minDelay]);
 
   return {
     ...query,

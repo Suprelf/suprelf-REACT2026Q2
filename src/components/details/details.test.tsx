@@ -25,7 +25,6 @@ describe('DetailsPanel', () => {
     expect(screen.getByTestId('loader')).toBeInTheDocument();
   });
 
-
   it('renders pokemon details', () => {
     mockedUseOutletContext.mockReturnValue({
       details: {

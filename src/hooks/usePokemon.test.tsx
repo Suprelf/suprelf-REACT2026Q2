@@ -28,9 +28,7 @@ describe('usePokemonList', () => {
       showLoader: false,
     };
 
-    vi.mocked(useMinLoadingQuery).mockReturnValue(
-      mockResult as any
-    );
+    vi.mocked(useMinLoadingQuery).mockReturnValue(mockResult as any);
 
     const result = usePokemonList(10, 0);
 
