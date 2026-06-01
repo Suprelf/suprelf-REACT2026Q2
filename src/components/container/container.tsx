@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate, useSearchParams, Outlet } from 'react-router-dom';
 import './container.css';
 
@@ -6,23 +6,21 @@ import SearchBar from '../searchBar/searchBar';
 import ItemGrid from '../itemGrid/itemGrid';
 import Loader from '../loader/loader';
 
-import {
-  fetchPokemon,
-  fetchPokemonList,
-  fetchPokemonDetails,
-} from '../../services/api';
-
-import type { Pokemon, PokemonDetails } from '../../types/types';
+import type { Pokemon } from '../../types/types';
 
 import { useLoader } from '../../hooks/useLoader';
 import { useLocalStorage } from '../../hooks/useLocalStorage';
 import FlyoutPanel from '../flyoutPanel/flyoutPanel';
 
+import { useParams } from 'react-router-dom';
+import { usePokemonDetails } from '../../hooks/usePokemonDetails';
+import { usePokemonList } from '../../hooks/usePokemon';
+import { usePokemonSearch } from '../../hooks/usePokemonSearch';
+
 const Container = () => {
   const navigate = useNavigate();
 
-  const { loading, run } = useLoader(1200);
-  const { loading: detailsLoading, run: runDetails } = useLoader(1200);
+  const { loading: loaderLoading } = useLoader(1200);
 
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -30,94 +28,38 @@ const Container = () => {
   const limit = 10;
   const offset = (page - 1) * limit;
 
-  const selectedName = window.location.pathname.includes('details')
-    ? window.location.pathname.split('/').pop()
-    : null;
-
-  const [listData, setListData] = useState<Pokemon[]>([]);
-  const [details, setDetails] = useState<PokemonDetails | null>(null);
-
   const [error, setError] = useState('');
-  const [isSearching, setIsSearching] = useState(false);
-  const [pageLoading, setPageLoading] = useState(false);
 
   const [lastSearch, setLastSearch] = useLocalStorage('last', '');
 
-  useEffect(() => {
-    const load = async () => {
-      try {
-        setPageLoading(true);
+  const { name: selectedName } = useParams();
 
-        const baseList = await run(fetchPokemonList(limit, offset));
+  const { data: details, isLoading: detailsLoading } =
+    usePokemonDetails(selectedName ?? '');
 
-        let finalList = baseList;
+  const listQuery = usePokemonList(limit, offset);
+  const baseList = listQuery.data ?? [];
 
-        if (lastSearch?.trim()) {
-          try {
-            const found = await run(fetchPokemon(lastSearch));
+  const searchQuery = usePokemonSearch(lastSearch ?? '');
+  const searchPokemon = searchQuery.data;
 
-            finalList = [
-              found,
-              ...baseList.filter((p) => p.name !== found.name),
-            ];
-          } catch {
-            setError('Pokemon not found');
-          }
-        }
+  const finalList =
+    lastSearch?.trim() && searchPokemon
+      ? [
+          searchPokemon,
+          ...baseList.filter((p) => p.name !== searchPokemon.name),
+        ]
+      : baseList;
 
-        setListData(finalList);
-      } catch {
-        setError('Failed to load data');
-      } finally {
-        setPageLoading(false);
-      }
-    };
+  const handleSearch = (value: string) => {
+    setError('');
+    setSearchParams((prev) => {
+      const params = new URLSearchParams(prev);
+      params.set('page', '1');
+      return params;
+    });
 
-    load();
-  }, [page, lastSearch]);
-
-  useEffect(() => {
-    const loadDetails = async () => {
-      if (!selectedName) {
-        setDetails(null);
-        return;
-      }
-
-      try {
-        const data = await runDetails(fetchPokemonDetails(selectedName));
-        setDetails(data);
-      } catch {
-        setError('Failed to load details');
-      }
-    };
-
-    loadDetails();
-  }, [selectedName]);
-
-  const handleSearch = async (value: string) => {
-    try {
-      setError('');
-      setIsSearching(true);
-
-      const newPokemon = await run(fetchPokemon(value));
-
-      setListData((prev) => {
-        const exists = prev.some((p) => p.name === newPokemon.name);
-        return exists ? prev : [newPokemon, ...prev];
-      });
-
-      setSearchParams((prev) => {
-        const params = new URLSearchParams(prev);
-        params.set('page', '1');
-        return params;
-      });
-
-      setLastSearch(value);
-    } catch {
-      setError('Pokemon not found');
-    } finally {
-      setIsSearching(false);
-    }
+    setLastSearch(value);
   };
 
   const handleSelect = (pokemon: Pokemon) => {
@@ -137,7 +79,9 @@ const Container = () => {
   };
 
   const isLoading =
-    (loading && listData.length === 0) || pageLoading || isSearching;
+    (listQuery.isLoading && baseList.length === 0) ||
+    searchQuery.isLoading ||
+    loaderLoading;
 
   return (
     <div className="container">
@@ -149,11 +93,13 @@ const Container = () => {
         </div>
       )}
 
-      {!isLoading && error && <div className="error-message">{error}</div>}
+      {!isLoading && error && (
+        <div className="error-message">{error}</div>
+      )}
 
       {!isLoading && (
         <div className="layout">
-          <ItemGrid listData={listData} onSelect={handleSelect} />
+          <ItemGrid listData={finalList} onSelect={handleSelect} />
 
           <div className="details-slot">
             <Outlet context={{ details, detailsLoading, handleClose }} />

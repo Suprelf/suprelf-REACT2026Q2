@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import './searchBar.css';
@@ -13,22 +13,17 @@ type Props = {
 
 const SearchBar = ({ onSearch }: Props) => {
   const [storedValue, setStoredValue] = useLocalStorage('last', '');
-  const [inputValue, setInputValue] = useState('');
-
-  useEffect(() => {
-    setInputValue(storedValue);
-  }, [storedValue]);
+  const [inputValue, setInputValue] = useState(storedValue);
 
   const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
   };
 
   const handleSearch = () => {
-    const trimmed = inputValue.trim();
+    const trimmed = storedValue.trim();
 
-    if (!trimmed || trimmed === storedValue) return;
+    if (!trimmed) return;
 
-    setStoredValue(trimmed);
     onSearch(trimmed);
   };
 
@@ -54,7 +49,7 @@ const SearchBar = ({ onSearch }: Props) => {
 
         <ErrorButton />
 
-        <ThemeSwitch></ThemeSwitch>
+        <ThemeSwitch />
       </div>
     </div>
   );

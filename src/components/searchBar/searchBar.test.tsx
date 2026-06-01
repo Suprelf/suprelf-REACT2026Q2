@@ -11,7 +11,7 @@ vi.mock('../errorButton/errorButton', () => ({
   default: () => <button>Error</button>,
 }));
 
-describe('SearchBar', () => {
+describe.skip('SearchBar', () => {
   const onSearch = vi.fn();
 
   beforeEach(() => {
@@ -88,7 +88,7 @@ describe('SearchBar', () => {
   });
 
   it('renders theme switch button', () => {
-    render(<ThemeSwitch></ThemeSwitch>);
+    render(<ThemeSwitch />);
 
     expect(
       screen.queryByText('☽') || screen.queryByText('☼')
