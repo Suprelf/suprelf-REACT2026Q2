@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import './searchBar.css';
@@ -13,10 +12,9 @@ type Props = {
 
 const SearchBar = ({ onSearch }: Props) => {
   const [storedValue, setStoredValue] = useLocalStorage('last', '');
-  const [inputValue, setInputValue] = useState(storedValue);
 
   const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInputValue(e.target.value);
+    setStoredValue(e.target.value);
   };
 
   const handleSearch = () => {
@@ -31,7 +29,7 @@ const SearchBar = ({ onSearch }: Props) => {
     <div className="main-container">
       <div className="search-container">
         <input
-          value={inputValue}
+          value={storedValue}
           onChange={handleInput}
           placeholder="Search here"
           className="search-input"

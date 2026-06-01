@@ -17,6 +17,11 @@ import { usePokemonDetails } from '../../hooks/usePokemonDetails';
 import { usePokemonList } from '../../hooks/usePokemon';
 import { usePokemonSearch } from '../../hooks/usePokemonSearch';
 
+const getErrorMessage = (error: unknown): string => {
+  if (error instanceof Error) return error.message;
+  return 'Something went wrong. Please try again later.';
+};
+
 const Container = () => {
   const navigate = useNavigate();
 
@@ -28,13 +33,11 @@ const Container = () => {
   const limit = 10;
   const offset = (page - 1) * limit;
 
-  const [error, setError] = useState('');
-
   const [lastSearch, setLastSearch] = useLocalStorage('last', '');
 
   const { name: selectedName } = useParams();
 
-  const { data: details, isLoading: detailsLoading } =
+  const { data: details, isLoading: detailsLoading, error: detailsError } =
     usePokemonDetails(selectedName ?? '');
 
   const listQuery = usePokemonList(limit, offset);
@@ -52,7 +55,6 @@ const Container = () => {
       : baseList;
 
   const handleSearch = (value: string) => {
-    setError('');
     setSearchParams((prev) => {
       const params = new URLSearchParams(prev);
       params.set('page', '1');
@@ -83,6 +85,11 @@ const Container = () => {
     searchQuery.isLoading ||
     loaderLoading;
 
+  const error =
+    listQuery.error ||
+    searchQuery.error ||
+    detailsError;
+
   return (
     <div className="container">
       <SearchBar onSearch={handleSearch} />
@@ -93,8 +100,10 @@ const Container = () => {
         </div>
       )}
 
-      {!isLoading && error && (
-        <div className="error-message">{error}</div>
+      {error && !isLoading && (
+        <div className="error-message">
+          {getErrorMessage(error)}
+        </div>
       )}
 
       {!isLoading && (
