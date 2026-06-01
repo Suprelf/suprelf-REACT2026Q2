@@ -1,31 +1,30 @@
-import { useNavigate, useSearchParams, Outlet } from 'react-router-dom';
+import {
+  useNavigate,
+  useSearchParams,
+  Outlet,
+  useParams,
+} from 'react-router-dom';
 import './container.css';
 
 import SearchBar from '../searchBar/searchBar';
 import ItemGrid from '../itemGrid/itemGrid';
 import Loader from '../loader/loader';
+import FlyoutPanel from '../flyoutPanel/flyoutPanel';
 
 import type { Pokemon } from '../../types/types';
 
-import { useLoader } from '../../hooks/useLoader';
 import { useLocalStorage } from '../../hooks/useLocalStorage';
-import FlyoutPanel from '../flyoutPanel/flyoutPanel';
+import { useMinLoadingQuery } from '../../hooks/useMinLoading';
 
-import { useParams } from 'react-router-dom';
-import { usePokemonDetails } from '../../hooks/usePokemonDetails';
-import { usePokemonList } from '../../hooks/usePokemon';
-import { usePokemonSearch } from '../../hooks/usePokemonSearch';
-
-const getErrorMessage = (error: unknown): string => {
-  if (error instanceof Error) return error.message;
-  return 'Something went wrong. Please try again later.';
-};
+import { pokemonKeys } from '../../services/queryKeys';
+import {
+  fetchPokemon,
+  fetchPokemonDetails,
+  fetchPokemonList,
+} from '../../services/api';
 
 const Container = () => {
   const navigate = useNavigate();
-
-  const { loading: loaderLoading } = useLoader(1200);
-
   const [searchParams, setSearchParams] = useSearchParams();
 
   const page = Number(searchParams.get('page') ?? 1);
@@ -36,16 +35,24 @@ const Container = () => {
 
   const { name: selectedName } = useParams();
 
-  const {
-    data: details,
-    isLoading: detailsLoading,
-    error: detailsError,
-  } = usePokemonDetails(selectedName ?? '');
+  const listQuery = useMinLoadingQuery({
+    queryKey: pokemonKeys.list(limit, offset),
+    queryFn: () => fetchPokemonList(limit, offset),
+  });
 
-  const listQuery = usePokemonList(limit, offset);
+  const searchQuery = useMinLoadingQuery({
+    queryKey: pokemonKeys.search(lastSearch ?? ''),
+    queryFn: () => fetchPokemon(lastSearch),
+    enabled: !!lastSearch,
+  });
+
+  const detailsQuery = useMinLoadingQuery({
+    queryKey: pokemonKeys.details(selectedName ?? ''),
+    queryFn: () => fetchPokemonDetails(selectedName ?? ''),
+    enabled: !!selectedName,
+  });
+
   const baseList = listQuery.data ?? [];
-
-  const searchQuery = usePokemonSearch(lastSearch ?? '');
   const searchPokemon = searchQuery.data;
 
   const finalList =
@@ -82,38 +89,45 @@ const Container = () => {
     });
   };
 
-  const isLoading =
-    (listQuery.isLoading && baseList.length === 0) ||
-    searchQuery.isLoading ||
-    loaderLoading;
+  const pageLoading =
+    listQuery.showLoader ||
+    searchQuery.showLoader;
 
-  const shouldShowDetails = !!selectedName;
-
-  const error = listQuery.error || searchQuery.error || detailsError;
+  const error =
+    listQuery.error ||
+    searchQuery.error ||
+    detailsQuery.error;
 
   return (
     <div className="container">
       <SearchBar onSearch={handleSearch} />
 
-      {isLoading && (
+      {pageLoading && (
         <div className="loader-overlay">
           <Loader />
         </div>
       )}
 
-      {error && !isLoading && (
-        <div className="error-message">{getErrorMessage(error)}</div>
+      {error && !pageLoading && (
+        <div className="error-message">
+          {error instanceof Error
+            ? error.message
+            : 'Something went wrong'}
+        </div>
       )}
 
-      {!isLoading && (
+      {!pageLoading && (
         <div className="layout">
-          <ItemGrid listData={finalList} onSelect={handleSelect} />
+          <ItemGrid
+            listData={finalList}
+            onSelect={handleSelect}
+          />
 
           <div className="details-slot">
             <Outlet
               context={{
-                details: shouldShowDetails ? details : undefined,
-                detailsLoading,
+                details: detailsQuery.data,
+                detailsLoading: detailsQuery.showLoader,
                 handleClose,
               }}
             />
@@ -121,16 +135,20 @@ const Container = () => {
         </div>
       )}
 
-      {!isLoading && (
+      {!pageLoading && (
         <div className="paginator-buttons">
           <button
             className="paginator-button"
-            onClick={() => changePage(Math.max(page - 1, 1))}
+            onClick={() =>
+              changePage(Math.max(page - 1, 1))
+            }
           >
             ◀
           </button>
 
-          <div className="paginator-button">{page}</div>
+          <div className="paginator-button">
+            {page}
+          </div>
 
           <button
             className="paginator-button"

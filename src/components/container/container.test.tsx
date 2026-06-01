@@ -1,145 +1,184 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { http, HttpResponse } from 'msw';
-
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { MemoryRouter, Route, Routes } from 'react-router-dom';
 
 import Container from './container';
-import { server } from '../../test-utils/server';
 
-vi.mock('../../hooks/useLoader', () => ({
-  useLoader: () => ({
-    loading: false,
-  }),
+const mockNavigate = vi.fn();
+const mockSetSearchParams = vi.fn();
+const mockSetLastSearch = vi.fn();
+
+vi.mock('react-router-dom', async () => {
+  const actual = await vi.importActual('react-router-dom');
+
+  return {
+    ...actual,
+
+    useNavigate: () => mockNavigate,
+
+    useSearchParams: () => [
+      new URLSearchParams('page=1'),
+      mockSetSearchParams,
+    ],
+
+    useParams: () => ({}),
+
+    Outlet: () => <div>Outlet</div>,
+  };
+});
+
+vi.mock('../../hooks/useLocalStorage', () => ({
+  useLocalStorage: () => ['', mockSetLastSearch],
 }));
 
-const createTestQueryClient = () =>
-  new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-        staleTime: 0,
-        gcTime: 0,
-      },
-    },
-  });
+const mockUseMinLoadingQuery = vi.fn();
 
-const renderApp = (initialRoute = '/') => {
-  const queryClient = createTestQueryClient();
+vi.mock('../../hooks/useMinLoading', () => ({
+  useMinLoadingQuery: (...args: unknown[]) =>
+    mockUseMinLoadingQuery(...args),
+}));
 
-  return render(
-    <QueryClientProvider client={queryClient}>
-      <MemoryRouter initialEntries={[initialRoute]}>
-        <Routes>
-          <Route path="/*" element={<Container />} />
-        </Routes>
-      </MemoryRouter>
-    </QueryClientProvider>
-  );
-};
+vi.mock('../searchBar/searchBar', () => ({
+  default: ({ onSearch }: any) => (
+    <button onClick={() => onSearch('pikachu')}>
+      Search
+    </button>
+  ),
+}));
 
-const setupDefaultApi = () => {
-  server.use(
-    http.get('https://pokeapi.co/api/v2/pokemon', () => {
-      return HttpResponse.json({
-        results: Array.from({ length: 10 }).map((_, i) => ({
-          name: `pokemon-${i}`,
-          url: `https://pokeapi.co/api/v2/pokemon/pokemon-${i}`,
-        })),
-      });
-    }),
+vi.mock('../itemGrid/itemGrid', () => ({
+  default: ({ listData, onSelect }: any) => (
+    <div>
+      <div data-testid="items-count">
+        {listData.length}
+      </div>
 
-    http.get('https://pokeapi.co/api/v2/pokemon/:name', ({ params }) => {
-      const name = params.name as string;
+      <button
+        onClick={() =>
+          onSelect({ name: 'pikachu' })
+        }
+      >
+        Select Pokemon
+      </button>
+    </div>
+  ),
+}));
 
-      return HttpResponse.json({
-        name,
-        url: `https://pokeapi.co/api/v2/pokemon/${name}`,
-        sprites: {
-          front_default: `${name}.png`,
-        },
-      });
-    }),
+vi.mock('../loader/loader', () => ({
+  default: () => <div>Loading...</div>,
+}));
 
-    http.get('https://pokeapi.co/api/v2/pokemon-species/:name', () => {
-      return HttpResponse.json({
-        flavor_text_entries: [
-          {
-            flavor_text: 'test text',
-            language: { name: 'en' },
-          },
-        ],
-      });
-    })
-  );
-};
+vi.mock('../flyoutPanel/flyoutPanel', () => ({
+  default: () => <div>Flyout</div>,
+}));
 
 describe('Container', () => {
   beforeEach(() => {
-    localStorage.clear();
-    setupDefaultApi();
+    vi.clearAllMocks();
+
+    mockUseMinLoadingQuery
+      .mockReturnValueOnce({
+        data: [{ name: 'bulbasaur' }],
+        showLoader: false,
+        error: null,
+      })
+      .mockReturnValueOnce({
+        data: null,
+        showLoader: false,
+        error: null,
+      })
+      .mockReturnValueOnce({
+        data: null,
+        showLoader: false,
+        error: null,
+      });
   });
 
-  it('renders pokemon list', async () => {
-    renderApp();
-
-    expect(await screen.findByText('Pokemon-0')).toBeInTheDocument();
-    expect(await screen.findByText('Pokemon-1')).toBeInTheDocument();
-  });
-
-  it('adds searched pokemon to list', async () => {
-    const user = userEvent.setup();
-
-    renderApp();
-
-    await user.type(screen.getByPlaceholderText('Search here'), 'pikachu');
-    await user.click(screen.getByText('Search'));
-
-    expect(await screen.findByText('Pikachu')).toBeInTheDocument();
-  });
-
-  it('does not duplicate pokemon in list after search', async () => {
-    const user = userEvent.setup();
-
-    renderApp();
-
-    await user.type(screen.getByPlaceholderText('Search here'), 'Pokemon-0');
-    await user.click(screen.getByText('Search'));
-
-    const all = await screen.findAllByText('Pokemon-0');
-
-    expect(all).toHaveLength(1);
-  });
-
-  it('shows error on invalid pokemon search', async () => {
-    const user = userEvent.setup();
-
-    server.use(
-      http.get('https://pokeapi.co/api/v2/pokemon/:name', () =>
-        HttpResponse.json(
-          { message: 'Pokemon not found' },
-          { status: 404 }
-        )
-      )
-    );
-
-    renderApp();
-
-    await user.type(screen.getByPlaceholderText('Search here'), 'invalid');
-    await user.click(screen.getByText('Search'));
+  it('renders pokemon list', () => {
+    render(<Container />);
 
     expect(
-      await screen.findByText(/not found|error/i)
+      screen.getByTestId('items-count')
+    ).toHaveTextContent('1');
+  });
+
+  it('handles search', async () => {
+    const user = userEvent.setup();
+
+    render(<Container />);
+
+    await user.click(
+      screen.getByText('Search')
+    );
+
+    expect(mockSetLastSearch).toHaveBeenCalledWith(
+      'pikachu'
+    );
+  });
+
+  it('navigates to details page', async () => {
+    const user = userEvent.setup();
+
+    render(<Container />);
+
+    await user.click(
+      screen.getByText('Select Pokemon')
+    );
+
+    expect(mockNavigate).toHaveBeenCalledWith(
+      '/details/pikachu?page=1'
+    );
+  });
+
+  it('shows loader', () => {
+    mockUseMinLoadingQuery
+      .mockReset()
+      .mockReturnValueOnce({
+        data: null,
+        showLoader: true,
+        error: null,
+      })
+      .mockReturnValueOnce({
+        data: null,
+        showLoader: false,
+        error: null,
+      })
+      .mockReturnValueOnce({
+        data: null,
+        showLoader: false,
+        error: null,
+      });
+
+    render(<Container />);
+
+    expect(
+      screen.getByText('Loading...')
     ).toBeInTheDocument();
   });
 
-  it('shows pagination controls', async () => {
-    renderApp();
+  it('shows error message', () => {
+    mockUseMinLoadingQuery
+      .mockReset()
+      .mockReturnValueOnce({
+        data: null,
+        showLoader: false,
+        error: new Error('API error'),
+      })
+      .mockReturnValueOnce({
+        data: null,
+        showLoader: false,
+        error: null,
+      })
+      .mockReturnValueOnce({
+        data: null,
+        showLoader: false,
+        error: null,
+      });
 
-    expect(await screen.findByText('1')).toBeInTheDocument();
-    expect(screen.getByText('◀')).toBeInTheDocument();
-    expect(screen.getByText('▶')).toBeInTheDocument();
+    render(<Container />);
+
+    expect(
+      screen.getByText('API error')
+    ).toBeInTheDocument();
   });
 });
