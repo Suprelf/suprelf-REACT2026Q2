@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import './searchBar.css';
@@ -5,9 +6,8 @@ import './searchBar.css';
 import { useLocalStorage } from '../../hooks/useLocalStorage';
 import ErrorButton from '../errorButton/errorButton';
 import ThemeSwitch from '../themeSwitch/themeSwitch';
-
-import { pokemonKeys } from '../../services/queryKeys';
 import RefreshButton from '../refreshButton/refreshButton';
+import { pokemonKeys } from '../../services/queryKeys';
 
 type Props = {
   onSearch: (value: string) => void;
@@ -15,26 +15,33 @@ type Props = {
 
 const SearchBar = ({ onSearch }: Props) => {
   const [storedValue, setStoredValue] = useLocalStorage('last', '');
+  const [inputValue, setInputValue] = useState('');
+
+  useEffect(() => {
+    setInputValue(storedValue);
+  }, [storedValue]);
 
   const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setStoredValue(e.target.value);
+    setInputValue(e.target.value);
   };
 
   const handleSearch = () => {
-    const trimmed = storedValue.trim();
+    const trimmed = inputValue.trim();
 
-    if (!trimmed) return;
+    if (!trimmed || trimmed === storedValue) return;
 
+    setStoredValue(trimmed);
     onSearch(trimmed);
   };
 
   return (
     <div className="main-container">
       <div className="search-container">
-        <RefreshButton queryKey={pokemonKeys.all} />
+
+        <RefreshButton queryKey={pokemonKeys.all}></RefreshButton>
 
         <input
-          value={storedValue}
+          value={inputValue}
           onChange={handleInput}
           placeholder="Search here"
           className="search-input"
@@ -52,7 +59,7 @@ const SearchBar = ({ onSearch }: Props) => {
 
         <ErrorButton />
 
-        <ThemeSwitch />
+        <ThemeSwitch></ThemeSwitch>
       </div>
     </div>
   );
