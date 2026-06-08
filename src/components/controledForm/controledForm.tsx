@@ -7,6 +7,8 @@ import { countries } from '../../store/countries';
 import type { Submission } from '../../types/types';
 
 import { PasswordIndicator } from '../passwordIndicator/passwordIndicator';
+import { validateImageFile } from '../../services/imageValidation';
+
 import './controledForm.css';
 
 type FormValues = {
@@ -34,13 +36,15 @@ export const ControlledForm = ({ onSubmit }: Props) => {
     handleSubmit,
     setValue,
     watch,
-    formState: { errors, isValid },
+    trigger,
+    formState: { errors },
   } = useForm<FormValues>({
     resolver: zodResolver(formSchemaWithPasswords),
-    mode: 'onChange',
+    mode: 'onSubmit',
+    reValidateMode: 'onChange',
     defaultValues: {
       name: '',
-      age: 0,
+      age: undefined as unknown as number,
       email: '',
       gender: 'male',
       country: '',
@@ -54,23 +58,33 @@ export const ControlledForm = ({ onSubmit }: Props) => {
 
   const passwordValue = watch('password');
 
-  const convertToBase64 = (file: File): Promise<string> => {
-    return new Promise((resolve, reject) => {
+  const convertToBase64 = (file: File): Promise<string> =>
+    new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = () => resolve(reader.result as string);
       reader.onerror = reject;
       reader.readAsDataURL(file);
     });
-  };
 
   const handleImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    const error = validateImageFile(file);
+
+    if (error) {
+      setValue('imageBase64', '', { shouldValidate: true });
+      setImagePreview('');
+      await trigger('imageBase64');
+      return;
+    }
+
     const base64 = await convertToBase64(file);
 
     setValue('imageBase64', base64, { shouldValidate: true });
     setImagePreview(base64);
+
+    await trigger('imageBase64');
   };
 
   const onSubmitForm = (data: FormValues) => {
@@ -97,8 +111,9 @@ export const ControlledForm = ({ onSubmit }: Props) => {
         <input
           type="number"
           className="form-input"
-          {...register('age', { valueAsNumber: true })}
           min={0}
+          step={1}
+          {...register('age', { valueAsNumber: true })}
         />
         {errors.age && <p className="form-error">{errors.age.message}</p>}
       </div>
@@ -128,14 +143,20 @@ export const ControlledForm = ({ onSubmit }: Props) => {
             </option>
           ))}
         </select>
-        {errors.country && <p className="form-error">{errors.country.message}</p>}
+        {errors.country && (
+          <p className="form-error">{errors.country.message}</p>
+        )}
       </div>
 
       <div className="form-group">
         <label>Password</label>
         <input type="password" className="form-input" {...register('password')} />
-        {errors.password && <p className="form-error">{errors.password.message}</p>}
         <PasswordIndicator value={passwordValue || ''} />
+        {errors.password && (
+          <p className="form-error">{errors.password.message}</p>
+        )}
+
+        
       </div>
 
       <div className="form-group">
@@ -146,7 +167,9 @@ export const ControlledForm = ({ onSubmit }: Props) => {
           {...register('confirmPassword')}
         />
         {errors.confirmPassword && (
-          <p className="form-error">{errors.confirmPassword.message}</p>
+          <p className="form-error">
+            {errors.confirmPassword.message}
+          </p>
         )}
       </div>
 
@@ -164,7 +187,9 @@ export const ControlledForm = ({ onSubmit }: Props) => {
         )}
 
         {errors.imageBase64 && (
-          <p className="form-error">{errors.imageBase64.message}</p>
+          <p className="form-error">
+            {errors.imageBase64.message}
+          </p>
         )}
       </div>
 
@@ -174,10 +199,12 @@ export const ControlledForm = ({ onSubmit }: Props) => {
       </label>
 
       {errors.acceptedTerms && (
-        <p className="form-error">{errors.acceptedTerms.message}</p>
+        <p className="form-error">
+          {errors.acceptedTerms.message}
+        </p>
       )}
 
-      <button className="form-button" type="submit" disabled={!isValid}>
+      <button className="form-button" type="submit">
         Submit
       </button>
     </form>

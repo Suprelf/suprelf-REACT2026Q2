@@ -4,6 +4,8 @@ import { countries } from '../../store/countries';
 import type { Submission } from '../../types/types';
 
 import { PasswordIndicator } from '../passwordIndicator/passwordIndicator';
+import { validateImageFile } from '../../services/imageValidation';
+
 import './uncontroledForm.css';
 
 type Props = {
@@ -32,7 +34,7 @@ export const UncontrolledForm = ({ onSubmit }: Props) => {
 
     const rawData = {
       name: String(fd.get('name') || ''),
-      age: Number(fd.get('age') || 0),
+      age: fd.get('age') ? Number(fd.get('age')) : undefined,
       email: String(fd.get('email') || ''),
       gender: fd.get('gender') as Submission['gender'],
       country: String(fd.get('country') || ''),
@@ -46,18 +48,10 @@ export const UncontrolledForm = ({ onSubmit }: Props) => {
     let imageBase64 = '';
 
     if (file && file.size > 0) {
-      const isValidType =
-        file.type === 'image/png' || file.type === 'image/jpeg';
+      const imageError = validateImageFile(file);
 
-      const isValidSize = file.size <= 2 * 1024 * 1024;
-
-      if (!isValidType) {
-        setErrors({ imageBase64: 'Only PNG or JPEG allowed' });
-        return;
-      }
-
-      if (!isValidSize) {
-        setErrors({ imageBase64: 'Image must be less than 2MB' });
+      if (imageError) {
+        setErrors({ imageBase64: imageError });
         return;
       }
 
@@ -115,10 +109,6 @@ export const UncontrolledForm = ({ onSubmit }: Props) => {
           type="number"
           min={0}
           step={1}
-          onInput={(e) => {
-            const target = e.target as HTMLInputElement;
-            target.value = target.value.replace(/[^0-9]/g, '');
-          }}
         />
         {errors.age && <p className="form-error">{errors.age}</p>}
       </div>
@@ -162,6 +152,10 @@ export const UncontrolledForm = ({ onSubmit }: Props) => {
         />
 
         <PasswordIndicator value={passwordValue} />
+
+        {errors.password && (
+          <p className="form-error">{errors.password}</p>
+        )}
       </div>
 
       <div className="form-group">
