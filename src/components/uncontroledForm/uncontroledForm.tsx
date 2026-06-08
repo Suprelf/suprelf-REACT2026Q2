@@ -7,6 +7,7 @@ import { PasswordIndicator } from '../passwordIndicator/passwordIndicator';
 import { validateImageFile } from '../../services/imageValidation';
 
 import './uncontroledForm.css';
+import { Autocomplete } from '../autocomplete/autocomplete';
 
 type Props = {
   onSubmit: (data: Submission) => void;
@@ -16,6 +17,7 @@ export const UncontrolledForm = ({ onSubmit }: Props) => {
   const formRef = useRef<HTMLFormElement>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [passwordValue, setPasswordValue] = useState('');
+  const [countryValue, setCountryValue] = useState('');
 
   const convertToBase64 = (file: File): Promise<string> =>
     new Promise((resolve, reject) => {
@@ -130,14 +132,12 @@ export const UncontrolledForm = ({ onSubmit }: Props) => {
 
       <div className="form-group">
         <label htmlFor="country">Country</label>
-        <select id="country" name="country" className="form-input">
-          <option value="">Select country</option>
-          {countries.map((c) => (
-            <option key={c} value={c}>
-              {c}
-            </option>
-          ))}
-        </select>
+        <Autocomplete
+          name="country"
+          options={countries}
+          value={countryValue}
+          onChange={setCountryValue}
+        />
         {errors.country && <p className="form-error">{errors.country}</p>}
       </div>
 
@@ -153,9 +153,7 @@ export const UncontrolledForm = ({ onSubmit }: Props) => {
 
         <PasswordIndicator value={passwordValue} />
 
-        {errors.password && (
-          <p className="form-error">{errors.password}</p>
-        )}
+        {errors.password && <p className="form-error">{errors.password}</p>}
       </div>
 
       <div className="form-group">

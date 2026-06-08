@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import { formSchemaWithPasswords } from '../../services/form.schema';
@@ -7,6 +7,7 @@ import { countries } from '../../store/countries';
 import type { Submission } from '../../types/types';
 
 import { PasswordIndicator } from '../passwordIndicator/passwordIndicator';
+import { Autocomplete } from '../autocomplete/autocomplete';
 import { validateImageFile } from '../../services/imageValidation';
 
 import './controledForm.css';
@@ -37,6 +38,7 @@ export const ControlledForm = ({ onSubmit }: Props) => {
     setValue,
     watch,
     trigger,
+    control,
     formState: { errors },
   } = useForm<FormValues>({
     resolver: zodResolver(formSchemaWithPasswords),
@@ -135,14 +137,20 @@ export const ControlledForm = ({ onSubmit }: Props) => {
 
       <div className="form-group">
         <label>Country</label>
-        <select className="form-input" {...register('country')}>
-          <option value="">Select country</option>
-          {countries.map((c) => (
-            <option key={c} value={c}>
-              {c}
-            </option>
-          ))}
-        </select>
+
+        <Controller
+          control={control}
+          name="country"
+          render={({ field }) => (
+            <Autocomplete
+              value={field.value}
+              options={countries}
+              onChange={(val) => field.onChange(val)}
+              name="country"
+            />
+          )}
+        />
+
         {errors.country && (
           <p className="form-error">{errors.country.message}</p>
         )}
@@ -150,13 +158,15 @@ export const ControlledForm = ({ onSubmit }: Props) => {
 
       <div className="form-group">
         <label>Password</label>
-        <input type="password" className="form-input" {...register('password')} />
+        <input
+          type="password"
+          className="form-input"
+          {...register('password')}
+        />
         <PasswordIndicator value={passwordValue || ''} />
         {errors.password && (
           <p className="form-error">{errors.password.message}</p>
         )}
-
-        
       </div>
 
       <div className="form-group">
@@ -167,9 +177,7 @@ export const ControlledForm = ({ onSubmit }: Props) => {
           {...register('confirmPassword')}
         />
         {errors.confirmPassword && (
-          <p className="form-error">
-            {errors.confirmPassword.message}
-          </p>
+          <p className="form-error">{errors.confirmPassword.message}</p>
         )}
       </div>
 
@@ -187,9 +195,7 @@ export const ControlledForm = ({ onSubmit }: Props) => {
         )}
 
         {errors.imageBase64 && (
-          <p className="form-error">
-            {errors.imageBase64.message}
-          </p>
+          <p className="form-error">{errors.imageBase64.message}</p>
         )}
       </div>
 
@@ -199,9 +205,7 @@ export const ControlledForm = ({ onSubmit }: Props) => {
       </label>
 
       {errors.acceptedTerms && (
-        <p className="form-error">
-          {errors.acceptedTerms.message}
-        </p>
+        <p className="form-error">{errors.acceptedTerms.message}</p>
       )}
 
       <button className="form-button" type="submit">
