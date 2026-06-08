@@ -1,4 +1,4 @@
-import type { PasswordStrength } from "../types/types";
+import type { PasswordStrength } from '../types/types';
 
 export const getPasswordStrength = (password: string): PasswordStrength => {
   let score = 0;

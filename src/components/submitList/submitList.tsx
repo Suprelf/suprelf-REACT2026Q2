@@ -14,9 +14,7 @@ const SubmitList = () => {
       {submissions.map((item) => (
         <div
           key={item.id}
-          className={`card ${
-            item.id === newSubmissionId ? 'card--new' : ''
-          }`}
+          className={`card ${item.id === newSubmissionId ? 'card--new' : ''}`}
         >
           {item.imageBase64 && (
             <div className="card-image">

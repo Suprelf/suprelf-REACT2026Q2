@@ -15,9 +15,12 @@ const emailSchema = z.string().refine((email) => {
 }, 'Invalid email format');
 
 export const formSchema = z.object({
-  name: z.string().min(1, 'Name is required').refine((val) => {
-    return val[0] === val[0]?.toUpperCase();
-  }, 'Name must start with uppercase letter'),
+  name: z
+    .string()
+    .min(1, 'Name is required')
+    .refine((val) => {
+      return val[0] === val[0]?.toUpperCase();
+    }, 'Name must start with uppercase letter'),
 
   age: z.number().int().nonnegative('Age must be a non-negative number'),
 

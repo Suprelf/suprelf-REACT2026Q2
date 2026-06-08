@@ -3,8 +3,6 @@ import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi } from 'vitest';
 import { UncontrolledForm } from './uncontroledForm';
 
-const file = new File(['hello'], 'test.png', { type: 'image/png' });
-
 describe('UncontrolledForm', () => {
   it('renders form fields', () => {
     render(<UncontrolledForm onSubmit={vi.fn()} />);

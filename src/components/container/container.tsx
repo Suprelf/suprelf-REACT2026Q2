@@ -9,15 +9,15 @@ type Props = {
 
 const Container = ({ onOpenControlled, onOpenUncontrolled }: Props) => {
   return (
-    <div className='container'>
-      <div className='header'>
+    <div className="container">
+      <div className="header">
         <TopBar
           onOpenControlled={onOpenControlled}
           onOpenUncontrolled={onOpenUncontrolled}
         />
       </div>
 
-      <div className='list'>
+      <div className="list">
         <SubmitList />
       </div>
     </div>

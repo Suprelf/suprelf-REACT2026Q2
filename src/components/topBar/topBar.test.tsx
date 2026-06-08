@@ -5,15 +5,14 @@ import TopBar from './topBar';
 
 describe('TopBar', () => {
   it('renders both buttons', () => {
-    render(
-      <TopBar
-        onOpenControlled={vi.fn()}
-        onOpenUncontrolled={vi.fn()}
-      />
-    );
+    render(<TopBar onOpenControlled={vi.fn()} onOpenUncontrolled={vi.fn()} />);
 
-    expect(screen.getByRole('button', { name: "Controlled Form"})).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: "Uncontrolled Form" })).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'Controlled Form' })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'Uncontrolled Form' })
+    ).toBeInTheDocument();
   });
 
   it('calls onOpenControlled on click', async () => {
@@ -27,7 +26,7 @@ describe('TopBar', () => {
       />
     );
 
-    await user.click(screen.getByRole('button', { name: "Controlled Form" }));
+    await user.click(screen.getByRole('button', { name: 'Controlled Form' }));
 
     expect(onOpenControlled).toHaveBeenCalled();
   });
@@ -43,7 +42,9 @@ describe('TopBar', () => {
       />
     );
 
-    await user.click(screen.getByRole('button', { name: /uncontrolled form/i }));
+    await user.click(
+      screen.getByRole('button', { name: /uncontrolled form/i })
+    );
 
     expect(onOpenUncontrolled).toHaveBeenCalled();
   });

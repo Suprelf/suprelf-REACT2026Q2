@@ -9,8 +9,8 @@ vi.mock('../../store/useStore', () => ({
 
 describe('SubmitList', () => {
   it('renders empty state when no submissions', () => {
-    (useFormStore as unknown as ReturnType<typeof vi.fn>).mockImplementation((selector: any) =>
-      selector({ submissions: [], newSubmissionId: null })
+    (useFormStore as unknown as ReturnType<typeof vi.fn>).mockImplementation(
+      (selector: any) => selector({ submissions: [], newSubmissionId: null })
     );
 
     render(<SubmitList />);
@@ -19,24 +19,25 @@ describe('SubmitList', () => {
   });
 
   it('renders submissions list', () => {
-    (useFormStore as unknown as ReturnType<typeof vi.fn>).mockImplementation((selector: any) =>
-      selector({
-        submissions: [
-          {
-            id: '1',
-            name: 'John',
-            email: 'john@test.com',
-            age: 25,
-            gender: 'male',
-            country: 'USA',
-            acceptedTerms: true,
-            password: 'Pass123!',
-            imageBase64: '',
-            createdAt: Date.now(),
-          },
-        ],
-        newSubmissionId: null,
-      })
+    (useFormStore as unknown as ReturnType<typeof vi.fn>).mockImplementation(
+      (selector: any) =>
+        selector({
+          submissions: [
+            {
+              id: '1',
+              name: 'John',
+              email: 'john@test.com',
+              age: 25,
+              gender: 'male',
+              country: 'USA',
+              acceptedTerms: true,
+              password: 'Pass123!',
+              imageBase64: '',
+              createdAt: Date.now(),
+            },
+          ],
+          newSubmissionId: null,
+        })
     );
 
     render(<SubmitList />);
@@ -46,24 +47,25 @@ describe('SubmitList', () => {
   });
 
   it('highlights new submission', () => {
-    (useFormStore as unknown as ReturnType<typeof vi.fn>).mockImplementation((selector: any) =>
-      selector({
-        submissions: [
-          {
-            id: '1',
-            name: 'John',
-            email: 'john@test.com',
-            age: 25,
-            gender: 'male',
-            country: 'USA',
-            acceptedTerms: true,
-            password: 'Pass123!',
-            imageBase64: '',
-            createdAt: Date.now(),
-          },
-        ],
-        newSubmissionId: '1',
-      })
+    (useFormStore as unknown as ReturnType<typeof vi.fn>).mockImplementation(
+      (selector: any) =>
+        selector({
+          submissions: [
+            {
+              id: '1',
+              name: 'John',
+              email: 'john@test.com',
+              age: 25,
+              gender: 'male',
+              country: 'USA',
+              acceptedTerms: true,
+              password: 'Pass123!',
+              imageBase64: '',
+              createdAt: Date.now(),
+            },
+          ],
+          newSubmissionId: '1',
+        })
     );
 
     render(<SubmitList />);

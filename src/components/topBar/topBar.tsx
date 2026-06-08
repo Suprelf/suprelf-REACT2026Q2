@@ -7,16 +7,16 @@ type Props = {
 
 const TopBar = ({ onOpenControlled, onOpenUncontrolled }: Props) => {
   return (
-    <div className='bar-wrapper'>
-      <button className='bar-button' onClick={onOpenControlled}>
+    <div className="bar-wrapper">
+      <button className="bar-button" onClick={onOpenControlled}>
         Controlled Form
       </button>
 
-      <button className='bar-button' onClick={onOpenUncontrolled}>
+      <button className="bar-button" onClick={onOpenUncontrolled}>
         Uncontrolled Form
       </button>
     </div>
   );
 };
 
-export default TopBar;  
+export default TopBar;

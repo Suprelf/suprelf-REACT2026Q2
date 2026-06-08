@@ -27,11 +27,11 @@ describe('App', () => {
     render(<App />);
 
     expect(
-      screen.getByRole('button', { name: "Controlled Form"})
+      screen.getByRole('button', { name: 'Controlled Form' })
     ).toBeInTheDocument();
 
     expect(
-      screen.getByRole('button', { name: "Uncontrolled Form"})
+      screen.getByRole('button', { name: 'Uncontrolled Form' })
     ).toBeInTheDocument();
   });
 
@@ -40,11 +40,9 @@ describe('App', () => {
 
     render(<App />);
 
-    await user.click(
-      screen.getByRole('button', { name: "Controlled Form"})
-    );
+    await user.click(screen.getByRole('button', { name: 'Controlled Form' }));
 
-    expect(screen.getByText("Controlled Form")).toBeInTheDocument();
+    expect(screen.getByText('Controlled Form')).toBeInTheDocument();
   });
 
   it('opens uncontrolled modal', async () => {
@@ -52,11 +50,9 @@ describe('App', () => {
 
     render(<App />);
 
-    await user.click(
-      screen.getByRole('button', { name: "Uncontrolled Form" })
-    );
+    await user.click(screen.getByRole('button', { name: 'Uncontrolled Form' }));
 
-    expect(screen.getByText("Uncontrolled Form")).toBeInTheDocument();
+    expect(screen.getByText('Uncontrolled Form')).toBeInTheDocument();
   });
 
   it('closes modal on ESC key', async () => {
@@ -64,9 +60,7 @@ describe('App', () => {
 
     render(<App />);
 
-    await user.click(
-      screen.getByRole('button', { name: "Controlled Form"})
-    );
+    await user.click(screen.getByRole('button', { name: 'Controlled Form' }));
 
     await user.keyboard('{Escape}');
   });
@@ -76,9 +70,7 @@ describe('App', () => {
 
     render(<App />);
 
-    await user.click(
-      screen.getByRole('button', { name: "Controlled Form" })
-    );
+    await user.click(screen.getByRole('button', { name: 'Controlled Form' }));
 
     expect(
       document.getElementById('modal-root')?.children.length

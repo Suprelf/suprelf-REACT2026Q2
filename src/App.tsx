@@ -52,9 +52,7 @@ function App() {
   return (
     <>
       <Modal isOpen={isOpen} onClose={closeModal}>
-        {mode === 'controlled' && (
-          <ControlledForm onSubmit={handleSubmit} />
-        )}
+        {mode === 'controlled' && <ControlledForm onSubmit={handleSubmit} />}
 
         {mode === 'uncontrolled' && (
           <UncontrolledForm onSubmit={handleSubmit} />

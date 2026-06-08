@@ -48,9 +48,7 @@ export const Modal = ({ isOpen, onClose, children }: ModalProps) => {
       role="dialog"
       aria-modal="true"
     >
-      <div className="modal-content">
-        {children}
-      </div>
+      <div className="modal-content">{children}</div>
     </div>,
     document.getElementById('modal-root') as HTMLElement
   );

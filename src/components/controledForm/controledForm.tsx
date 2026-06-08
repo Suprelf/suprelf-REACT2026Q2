@@ -104,11 +104,7 @@ export const ControlledForm = ({ onSubmit }: Props) => {
 
       <div className="form-group">
         <label htmlFor="name">Name</label>
-        <input
-          id="name"
-          className="form-input"
-          {...register('name')}
-        />
+        <input id="name" className="form-input" {...register('name')} />
         {errors.name && <p className="form-error">{errors.name.message}</p>}
       </div>
 
@@ -127,21 +123,13 @@ export const ControlledForm = ({ onSubmit }: Props) => {
 
       <div className="form-group">
         <label htmlFor="email">Email</label>
-        <input
-          id="email"
-          className="form-input"
-          {...register('email')}
-        />
+        <input id="email" className="form-input" {...register('email')} />
         {errors.email && <p className="form-error">{errors.email.message}</p>}
       </div>
 
       <div className="form-group">
         <label htmlFor="gender">Gender</label>
-        <select
-          id="gender"
-          className="form-input"
-          {...register('gender')}
-        >
+        <select id="gender" className="form-input" {...register('gender')}>
           <option value="male">Male</option>
           <option value="female">Female</option>
         </select>
@@ -206,23 +194,14 @@ export const ControlledForm = ({ onSubmit }: Props) => {
           onChange={handleImage}
         />
 
-        {imagePreview && (
-          <img
-            src={imagePreview}
-            alt="preview"
-            width={80}
-          />
-        )}
+        {imagePreview && <img src={imagePreview} alt="preview" width={80} />}
 
         {errors.imageBase64 && (
           <p className="form-error">{errors.imageBase64.message}</p>
         )}
       </div>
 
-      <label
-        htmlFor="acceptedTerms"
-        className="form-checkbox"
-      >
+      <label htmlFor="acceptedTerms" className="form-checkbox">
         <input
           id="acceptedTerms"
           type="checkbox"
@@ -235,11 +214,7 @@ export const ControlledForm = ({ onSubmit }: Props) => {
         <p className="form-error">{errors.acceptedTerms.message}</p>
       )}
 
-      <button
-        className="form-button"
-        type="submit"
-        disabled={!isValid}
-      >
+      <button className="form-button" type="submit" disabled={!isValid}>
         Submit
       </button>
     </form>

@@ -15,9 +15,7 @@ describe('Autocomplete', () => {
   });
 
   it('opens dropdown on focus', async () => {
-    render(
-      <Autocomplete value="" onChange={vi.fn()} options={options} />
-    );
+    render(<Autocomplete value="" onChange={vi.fn()} options={options} />);
 
     await userEvent.click(screen.getByRole('textbox'));
 
@@ -25,9 +23,7 @@ describe('Autocomplete', () => {
   });
 
   it('filters options based on input', async () => {
-    render(
-      <Autocomplete value="" onChange={vi.fn()} options={options} />
-    );
+    render(<Autocomplete value="" onChange={vi.fn()} options={options} />);
 
     const input = screen.getByRole('textbox');
 
@@ -40,9 +36,7 @@ describe('Autocomplete', () => {
   it('calls onChange when typing', async () => {
     const onChange = vi.fn();
 
-    render(
-      <Autocomplete value="" onChange={onChange} options={options} />
-    );
+    render(<Autocomplete value="" onChange={onChange} options={options} />);
 
     const input = screen.getByRole('textbox');
 
@@ -54,9 +48,7 @@ describe('Autocomplete', () => {
   it('selects option on mouse down', async () => {
     const onChange = vi.fn();
 
-    render(
-      <Autocomplete value="" onChange={onChange} options={options} />
-    );
+    render(<Autocomplete value="" onChange={onChange} options={options} />);
 
     await userEvent.click(screen.getByRole('textbox'));
     await userEvent.click(screen.getByText('USA'));

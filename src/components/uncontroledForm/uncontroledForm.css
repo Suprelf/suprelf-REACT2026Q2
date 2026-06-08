@@ -60,7 +60,9 @@
   font-size: 18px;
   font-family: Verdana, Geneva, Tahoma, sans-serif;
 
-  transition: box-shadow 0.2s ease, transform 0.1s ease;
+  transition:
+    box-shadow 0.2s ease,
+    transform 0.1s ease;
 }
 
 .form-input:focus {
