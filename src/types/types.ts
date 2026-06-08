@@ -17,10 +17,15 @@ export type FormStore = {
   submissions: Submission[];
   countries: string[];
 
+  newSubmissionId: string | null;
+
   addSubmission: (submission: Submission) => void;
+  setNewSubmissionId: (id: string | null) => void;
 };
 
 export type PasswordStrength = {
   score: number;
   label: 'Weak' | 'Medium' | 'Strong' | 'Very strong';
 };
+
+export type SubmissionInput = Omit<Submission, 'id'>;

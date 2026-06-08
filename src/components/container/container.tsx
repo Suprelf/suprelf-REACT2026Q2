@@ -2,15 +2,23 @@ import SubmitList from '../submitList/submitList';
 import TopBar from '../topBar/topBar';
 import './container.css';
 
-const Container = () => {
+type Props = {
+  onOpenControlled: () => void;
+  onOpenUncontrolled: () => void;
+};
+
+const Container = ({ onOpenControlled, onOpenUncontrolled }: Props) => {
   return (
     <div className='container'>
       <div className='header'>
-        <TopBar></TopBar>
+        <TopBar
+          onOpenControlled={onOpenControlled}
+          onOpenUncontrolled={onOpenUncontrolled}
+        />
       </div>
 
       <div className='list'>
-        <SubmitList></SubmitList>
+        <SubmitList />
       </div>
     </div>
   );

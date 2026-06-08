@@ -1,23 +1,49 @@
+import { useFormStore } from '../../store/useStore';
 import './submitList.css';
 
 const SubmitList = () => {
-  return (
-    <div className="table-container">
-      <div className="table-item">
-        <div className="item-name table-header">Name</div>
-        <div className="item-desc table-header">Description</div>
-      </div>
-      <hr className="hr-header" />
+  const submissions = useFormStore((s) => s.submissions);
+  const newSubmissionId = useFormStore((s) => s.newSubmissionId);
 
-      <div>
-        <div className="table-item">
-          <div className="item-name">
-            name
+  if (submissions.length === 0) {
+    return <div className="empty">No submissions yet</div>;
+  }
+
+  return (
+    <div className="grid">
+      {submissions.map((item) => (
+        <div
+          key={item.id}
+          className={`card ${
+            item.id === newSubmissionId ? 'card--new' : ''
+          }`}
+        >
+          {item.imageBase64 && (
+            <div className="card-image">
+              <img src={item.imageBase64} alt="avatar" />
+            </div>
+          )}
+
+          <div className="card-content">
+            <div className="card-header">
+              <h4>{item.name}</h4>
+              <span>{item.email}</span>
+            </div>
+
+            <div className="card-body">
+              <p>
+                <b>Age:</b> {item.age}
+              </p>
+              <p>
+                <b>Gender:</b> {item.gender}
+              </p>
+              <p>
+                <b>Country:</b> {item.country}
+              </p>
+            </div>
           </div>
-          <div className="item-desc"></div>
         </div>
-        <hr className="hr-item" />
-      </div>
+      ))}
     </div>
   );
 };

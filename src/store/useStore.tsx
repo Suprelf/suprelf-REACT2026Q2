@@ -4,10 +4,17 @@ import { countries } from './countries';
 
 export const useFormStore = create<FormStore>((set) => ({
   submissions: [],
-  countries: countries,
+  countries,
+
+  newSubmissionId: null,
 
   addSubmission: (submission) =>
     set((state) => ({
       submissions: [submission, ...state.submissions],
+    })),
+
+  setNewSubmissionId: (id) =>
+    set(() => ({
+      newSubmissionId: id,
     })),
 }));
