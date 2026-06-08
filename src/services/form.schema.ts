@@ -30,7 +30,7 @@ export const formSchema = z.object({
     message: 'Country must be selected from the list',
   }),
 
-  acceptedTerms: z.literal(true, {
+  acceptedTerms: z.boolean().refine((val) => val === true, {
     message: 'You must accept Terms and Conditions',
   }),
 

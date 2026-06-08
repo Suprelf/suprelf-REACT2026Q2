@@ -1,5 +1,6 @@
 import './App.css';
 import Container from './components/container/container';
+import { ControlledForm } from './components/controledForm/controledForm';
 import { Modal } from './components/modal/modal';
 import { UncontrolledForm } from './components/uncontroledForm/uncontroledForm';
 import type { Submission } from './types/types';
@@ -12,6 +13,11 @@ function App() {
       <Modal isOpen={true} onClose={function (): void {
         throw new Error('Function not implemented.');
       } } >
+        <ControlledForm onSubmit={function (data: Submission): void {
+          throw new Error('Function not implemented.');
+        } }></ControlledForm>
+
+
         <UncontrolledForm onSubmit={function (data: Submission): void {
           throw new Error('Function not implemented.');
         } }></UncontrolledForm>

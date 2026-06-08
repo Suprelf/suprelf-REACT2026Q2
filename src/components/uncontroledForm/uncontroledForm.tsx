@@ -2,6 +2,7 @@ import { useRef, useState } from 'react';
 import { formSchemaWithPasswords } from '../../services/form.schema';
 import { countries } from '../../store/countries';
 import type { Submission } from '../../types/types';
+
 import './uncontroledForm.css';
 
 type Props = {
@@ -12,32 +13,30 @@ export const UncontrolledForm = ({ onSubmit }: Props) => {
   const formRef = useRef<HTMLFormElement>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const convertToBase64 = (file: File): Promise<string> => {
-    return new Promise((resolve, reject) => {
+  const convertToBase64 = (file: File): Promise<string> =>
+    new Promise((resolve, reject) => {
       const reader = new FileReader();
-
       reader.onload = () => resolve(reader.result as string);
       reader.onerror = reject;
-
       reader.readAsDataURL(file);
     });
-  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const fd = new FormData(e.currentTarget);
-    const file = fd.get('image') as File;
+
+    const file = fd.get('image') as File | null;
 
     const rawData = {
-      name: String(fd.get('name')),
-      age: Number(fd.get('age')),
-      email: String(fd.get('email')),
+      name: String(fd.get('name') || ''),
+      age: Number(fd.get('age') || 0),
+      email: String(fd.get('email') || ''),
       gender: fd.get('gender') as Submission['gender'],
-      country: String(fd.get('country')),
+      country: String(fd.get('country') || ''),
       acceptedTerms: fd.get('acceptedTerms') === 'on',
-      password: String(fd.get('password')),
-      confirmPassword: String(fd.get('confirmPassword')),
+      password: String(fd.get('password') || ''),
+      confirmPassword: String(fd.get('confirmPassword') || ''),
       imageBase64: '',
       createdAt: Date.now(),
     };
@@ -45,6 +44,21 @@ export const UncontrolledForm = ({ onSubmit }: Props) => {
     let imageBase64 = '';
 
     if (file && file.size > 0) {
+      const isValidType =
+        file.type === 'image/png' || file.type === 'image/jpeg';
+
+      const isValidSize = file.size <= 2 * 1024 * 1024; // 2MB
+
+      if (!isValidType) {
+        setErrors({ imageBase64: 'Only PNG or JPEG allowed' });
+        return;
+      }
+
+      if (!isValidSize) {
+        setErrors({ imageBase64: 'Image must be less than 2MB' });
+        return;
+      }
+
       imageBase64 = await convertToBase64(file);
     }
 
@@ -58,7 +72,8 @@ export const UncontrolledForm = ({ onSubmit }: Props) => {
 
       parsed.error.issues.forEach((issue) => {
         const key = issue.path[0];
-        if (key) {
+
+        if (key && !fieldErrors[key as string]) {
           fieldErrors[key as string] = issue.message;
         }
       });
@@ -80,6 +95,8 @@ export const UncontrolledForm = ({ onSubmit }: Props) => {
 
   return (
     <form ref={formRef} onSubmit={handleSubmit} className="form">
+      <h3>Uncontrolled form</h3>
+
       <div className="form-group">
         <label htmlFor="name">Name</label>
         <input id="name" className="form-input" name="name" />
@@ -97,7 +114,6 @@ export const UncontrolledForm = ({ onSubmit }: Props) => {
           step={1}
           onInput={(e) => {
             const target = e.target as HTMLInputElement;
-
             target.value = target.value.replace(/[^0-9]/g, '');
           }}
         />
@@ -116,11 +132,13 @@ export const UncontrolledForm = ({ onSubmit }: Props) => {
           <option value="male">Male</option>
           <option value="female">Female</option>
         </select>
+        {errors.gender && <p className="form-error">{errors.gender}</p>}
       </div>
 
       <div className="form-group">
         <label htmlFor="country">Country</label>
         <select id="country" name="country" className="form-input">
+          <option value="">Select country</option>
           {countries.map((c) => (
             <option key={c} value={c}>
               {c}
@@ -160,6 +178,7 @@ export const UncontrolledForm = ({ onSubmit }: Props) => {
           name="image"
           type="file"
           accept="image/png, image/jpeg"
+          className="form-input"
         />
         {errors.imageBase64 && (
           <p className="form-error">{errors.imageBase64}</p>
