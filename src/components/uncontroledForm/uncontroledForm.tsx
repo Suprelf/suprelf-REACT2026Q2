@@ -3,6 +3,7 @@ import { formSchemaWithPasswords } from '../../services/form.schema';
 import { countries } from '../../store/countries';
 import type { Submission } from '../../types/types';
 
+import { PasswordIndicator } from '../passwordIndicator/passwordIndicator';
 import './uncontroledForm.css';
 
 type Props = {
@@ -12,6 +13,7 @@ type Props = {
 export const UncontrolledForm = ({ onSubmit }: Props) => {
   const formRef = useRef<HTMLFormElement>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [passwordValue, setPasswordValue] = useState('');
 
   const convertToBase64 = (file: File): Promise<string> =>
     new Promise((resolve, reject) => {
@@ -47,7 +49,7 @@ export const UncontrolledForm = ({ onSubmit }: Props) => {
       const isValidType =
         file.type === 'image/png' || file.type === 'image/jpeg';
 
-      const isValidSize = file.size <= 2 * 1024 * 1024; // 2MB
+      const isValidSize = file.size <= 2 * 1024 * 1024;
 
       if (!isValidType) {
         setErrors({ imageBase64: 'Only PNG or JPEG allowed' });
@@ -91,6 +93,7 @@ export const UncontrolledForm = ({ onSubmit }: Props) => {
 
     formRef.current?.reset();
     setErrors({});
+    setPasswordValue('');
   };
 
   return (
@@ -155,7 +158,10 @@ export const UncontrolledForm = ({ onSubmit }: Props) => {
           className="form-input"
           name="password"
           type="password"
+          onChange={(e) => setPasswordValue(e.target.value)}
         />
+
+        <PasswordIndicator value={passwordValue} />
       </div>
 
       <div className="form-group">

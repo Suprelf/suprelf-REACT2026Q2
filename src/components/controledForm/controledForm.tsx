@@ -6,6 +6,7 @@ import { formSchemaWithPasswords } from '../../services/form.schema';
 import { countries } from '../../store/countries';
 import type { Submission } from '../../types/types';
 
+import { PasswordIndicator } from '../passwordIndicator/passwordIndicator';
 import './controledForm.css';
 
 type FormValues = {
@@ -32,6 +33,7 @@ export const ControlledForm = ({ onSubmit }: Props) => {
     register,
     handleSubmit,
     setValue,
+    watch,
     formState: { errors, isValid },
   } = useForm<FormValues>({
     resolver: zodResolver(formSchemaWithPasswords),
@@ -50,6 +52,8 @@ export const ControlledForm = ({ onSubmit }: Props) => {
     },
   });
 
+  const passwordValue = watch('password');
+
   const convertToBase64 = (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -61,7 +65,6 @@ export const ControlledForm = ({ onSubmit }: Props) => {
 
   const handleImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-
     if (!file) return;
 
     const base64 = await convertToBase64(file);
@@ -125,21 +128,14 @@ export const ControlledForm = ({ onSubmit }: Props) => {
             </option>
           ))}
         </select>
-        {errors.country && (
-          <p className="form-error">{errors.country.message}</p>
-        )}
+        {errors.country && <p className="form-error">{errors.country.message}</p>}
       </div>
 
       <div className="form-group">
         <label>Password</label>
-        <input
-          type="password"
-          className="form-input"
-          {...register('password')}
-        />
-        {errors.password && (
-          <p className="form-error">{errors.password.message}</p>
-        )}
+        <input type="password" className="form-input" {...register('password')} />
+        {errors.password && <p className="form-error">{errors.password.message}</p>}
+        <PasswordIndicator value={passwordValue || ''} />
       </div>
 
       <div className="form-group">
@@ -164,12 +160,7 @@ export const ControlledForm = ({ onSubmit }: Props) => {
         />
 
         {imagePreview && (
-          <img
-            src={imagePreview}
-            alt="preview"
-            width={80}
-            style={{ marginTop: 8, borderRadius: 8 }}
-          />
+          <img src={imagePreview} alt="preview" width={80} />
         )}
 
         {errors.imageBase64 && (
