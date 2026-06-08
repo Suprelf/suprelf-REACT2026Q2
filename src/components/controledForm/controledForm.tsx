@@ -39,10 +39,10 @@ export const ControlledForm = ({ onSubmit }: Props) => {
     watch,
     trigger,
     control,
-    formState: { errors },
+    formState: { errors, isValid },
   } = useForm<FormValues>({
     resolver: zodResolver(formSchemaWithPasswords),
-    mode: 'onSubmit',
+    mode: 'onChange',
     reValidateMode: 'onChange',
     defaultValues: {
       name: '',
@@ -103,14 +103,19 @@ export const ControlledForm = ({ onSubmit }: Props) => {
       <h3>Controlled form</h3>
 
       <div className="form-group">
-        <label>Name</label>
-        <input className="form-input" {...register('name')} />
+        <label htmlFor="name">Name</label>
+        <input
+          id="name"
+          className="form-input"
+          {...register('name')}
+        />
         {errors.name && <p className="form-error">{errors.name.message}</p>}
       </div>
 
       <div className="form-group">
-        <label>Age</label>
+        <label htmlFor="age">Age</label>
         <input
+          id="age"
           type="number"
           className="form-input"
           min={0}
@@ -121,14 +126,22 @@ export const ControlledForm = ({ onSubmit }: Props) => {
       </div>
 
       <div className="form-group">
-        <label>Email</label>
-        <input className="form-input" {...register('email')} />
+        <label htmlFor="email">Email</label>
+        <input
+          id="email"
+          className="form-input"
+          {...register('email')}
+        />
         {errors.email && <p className="form-error">{errors.email.message}</p>}
       </div>
 
       <div className="form-group">
-        <label>Gender</label>
-        <select className="form-input" {...register('gender')}>
+        <label htmlFor="gender">Gender</label>
+        <select
+          id="gender"
+          className="form-input"
+          {...register('gender')}
+        >
           <option value="male">Male</option>
           <option value="female">Female</option>
         </select>
@@ -136,7 +149,7 @@ export const ControlledForm = ({ onSubmit }: Props) => {
       </div>
 
       <div className="form-group">
-        <label>Country</label>
+        <label htmlFor="country">Country</label>
 
         <Controller
           control={control}
@@ -145,7 +158,7 @@ export const ControlledForm = ({ onSubmit }: Props) => {
             <Autocomplete
               value={field.value}
               options={countries}
-              onChange={(val) => field.onChange(val)}
+              onChange={field.onChange}
               name="country"
             />
           )}
@@ -157,8 +170,9 @@ export const ControlledForm = ({ onSubmit }: Props) => {
       </div>
 
       <div className="form-group">
-        <label>Password</label>
+        <label htmlFor="password">Password</label>
         <input
+          id="password"
           type="password"
           className="form-input"
           {...register('password')}
@@ -170,8 +184,9 @@ export const ControlledForm = ({ onSubmit }: Props) => {
       </div>
 
       <div className="form-group">
-        <label>Confirm Password</label>
+        <label htmlFor="confirmPassword">Confirm Password</label>
         <input
+          id="confirmPassword"
           type="password"
           className="form-input"
           {...register('confirmPassword')}
@@ -182,8 +197,9 @@ export const ControlledForm = ({ onSubmit }: Props) => {
       </div>
 
       <div className="form-group">
-        <label>Image</label>
+        <label htmlFor="image">Image</label>
         <input
+          id="image"
           type="file"
           accept="image/png, image/jpeg"
           className="form-input"
@@ -191,7 +207,11 @@ export const ControlledForm = ({ onSubmit }: Props) => {
         />
 
         {imagePreview && (
-          <img src={imagePreview} alt="preview" width={80} />
+          <img
+            src={imagePreview}
+            alt="preview"
+            width={80}
+          />
         )}
 
         {errors.imageBase64 && (
@@ -199,8 +219,15 @@ export const ControlledForm = ({ onSubmit }: Props) => {
         )}
       </div>
 
-      <label className="form-checkbox">
-        <input type="checkbox" {...register('acceptedTerms')} />
+      <label
+        htmlFor="acceptedTerms"
+        className="form-checkbox"
+      >
+        <input
+          id="acceptedTerms"
+          type="checkbox"
+          {...register('acceptedTerms')}
+        />
         Accept Terms and Conditions
       </label>
 
@@ -208,7 +235,11 @@ export const ControlledForm = ({ onSubmit }: Props) => {
         <p className="form-error">{errors.acceptedTerms.message}</p>
       )}
 
-      <button className="form-button" type="submit">
+      <button
+        className="form-button"
+        type="submit"
+        disabled={!isValid}
+      >
         Submit
       </button>
     </form>
