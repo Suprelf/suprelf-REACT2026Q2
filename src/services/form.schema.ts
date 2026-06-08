@@ -24,7 +24,7 @@ export const formSchema = z.object({
 
   email: emailSchema,
 
-  gender: z.enum(['male', 'female', 'other']),
+  gender: z.enum(['male', 'female']),
 
   country: z.string().refine((val) => countries.includes(val), {
     message: 'Country must be selected from the list',
