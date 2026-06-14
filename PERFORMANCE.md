@@ -18,7 +18,7 @@
 
 - **Commit duration**: 2.8 s
 - **Render duration**: 261.3 ms
-- **Screenshot**: ![C](./screenshots/C.png)
+- **Screenshot**: ![C_0](./screenshots/C_0.png)
 
 ### Interaction D: Toggle column
 
@@ -33,25 +33,25 @@
 
 - **Commit duration**: 1.9 s
 - **Render duration**: 22.5 ms
-- **Screenshot**: ![A_1](./screenshots/D.png)
+- **Screenshot**: ![A_1](./screenshots/A_1.png)
 
 ### Interaction B: Search countries
 
 - **Commit duration**: 2.1 s
 - **Render duration**: 12 ms
-- **Screenshot**: ![B_1](./screenshots/D.png)
+- **Screenshot**: ![B_1](./screenshots/B_1.png)
 
 ### Interaction C: Change year
 
 - **Commit duration**: 1.8 s
 - **Render duration**: 21.1 ms
-- **Screenshot**: ![C_1](./screenshots/D.png)
+- **Screenshot**: ![C_1](./screenshots/C_1.png)
 
 ### Interaction D: Toggle column
 
 - **Commit duration**: 1.8 s
 - **Render duration**: 15.7 ms
-- **Screenshot**: ![D_1](./screenshots/D.png)
+- **Screenshot**: ![D_1](./screenshots/D_1.png)
 
 ## Summary of Improvements
 
