@@ -1,56 +1,64 @@
-## Before Optimizations
+# Performance Optimization Report
 
-### 1. Sorting Countries
+## Baseline Measurements
 
-- Commit duration:  1.5 s
-- Render duration:  267.7 ms
-- Screenshot:
-![sorting](./screenshots/sorting.png)
+### Interaction A: Sort countries
 
-### 2. Searching Country
+- **Commit duration**: 2.1 s
+- **Render duration**: 363.3 ms
+- **Screenshot**: ![A](./screenshots/A.png)
 
-- Commit duration:  1.8 s
-- Render duration:  111.6 ms
-- Screenshot:
-![searching](./screenshots/searching.png)
+### Interaction B: Search countries
 
-### 3. Selecting Year
+- **Commit duration**: 2 s
+- **Render duration**: 99 ms
+- **Screenshot**: ![B](./screenshots/B.png)
 
-- Commit duration:  2.4 s
-- Render duration:  249.9 ms
-- Screenshot:
-![year](./screenshots/year.png)
+### Interaction C: Change year
 
-### 4. Toggling Columns
+- **Commit duration**: 2.8 s
+- **Render duration**: 261.3 ms
+- **Screenshot**: ![C](./screenshots/C.png)
 
-- Commit duration:  1.1 s
-- Render duration:  234.4 ms
-- Screenshot:
-![columns](./screenshots/columns.png)
----
+### Interaction D: Toggle column
 
-## After Optimizations
+- **Commit duration**: 1.3 s
+- **Render duration**: 239.8 ms
+- **Screenshot**: ![D](./screenshots/D.png)
 
-### 1. Sorting Countries
 
-- Commit duration: XX ms
-- Render duration: XX ms
-- Improvement: XX%
+## Optimized Measurements
 
-### 2. Searching Country
+### Interaction A: Sort countries
 
-- Commit duration: XX ms
-- Render duration: XX ms
-- Improvement: XX%
+- **Commit duration**: \_\_\_ s
+- **Render duration**: \_\_\_ ms
+- **Screenshot**: ![screenshot](image.png)
 
-### 3. Selecting Year
+### Interaction B: Search countries
 
-- Commit duration: XX ms
-- Render duration: XX ms
-- Improvement: XX%
+- **Commit duration**: \_\_\_ s
+- **Render duration**: \_\_\_ ms
+- **Screenshot**: ![screenshot](image.png)
 
-### 4. Toggling Columns
+### Interaction C: Change year
 
-- Commit duration: XX ms
-- Render duration: XX ms
-- Improvement: XX%
+- **Commit duration**: \_\_\_ s
+- **Render duration**: \_\_\_ ms
+- **Screenshot**: ![screenshot](image.png)
+
+### Interaction D: Toggle column
+
+- **Commit duration**: \_\_\_ s
+- **Render duration**: \_\_\_ ms
+- **Screenshot**: ![screenshot](image.png)
+
+## Summary of Improvements
+
+| Interaction      | Baseline (ms) | Optimized (ms) | Improvement |
+| ---------------- | ------------- | -------------- | ----------- |
+| Sort countries   | \_\_\_        | \_\_\_         | \_\_\_%     |
+| Search countries | \_\_\_        | \_\_\_         | \_\_\_%     |
+| Change year      | \_\_\_        | \_\_\_         | \_\_\_%     |
+| Toggle column    | \_\_\_        | \_\_\_         | \_\_\_%     |
+| **Average**      | **\_\_\_**    | **\_\_\_**     | **\_\_\_%** |
