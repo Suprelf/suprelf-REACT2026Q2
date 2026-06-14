@@ -8,6 +8,7 @@ import { ColumnModal } from '../column-modal/column-modal';
 import { getAvailableYears, getAvailableColumns } from '../../utils/data-transformers';
 
 import styles from './app.module.css';
+import { useDebounce } from '../../hooks/useDebounce';
 
 type AppState = {
   searchQuery: string;
@@ -84,6 +85,8 @@ export const App = () => {
     }));
   }, []);
 
+  const debouncedSearch = useDebounce(state.searchQuery, 200);
+
   if (isLoading) {
     return <LoadingSpinner />;
   }
@@ -131,7 +134,7 @@ export const App = () => {
       {/* Country List */}
       <CountryList
         countries={data}
-        searchQuery={state.searchQuery}
+        searchQuery={debouncedSearch}
         selectedColumns={state.selectedColumns}
         selectedRegion={state.selectedRegion}
         selectedYear={state.selectedYear}
