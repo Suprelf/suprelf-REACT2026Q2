@@ -1,0 +1,42 @@
+.details-panel {
+  position: sticky;
+  top: 16px;
+  right: 24px;
+
+  width: 320px;
+  height: 424px;
+
+  background: var(--card-bg);
+  border-radius: 4px;
+  box-shadow: var(--card-shadow);
+
+  display: flex;
+  flex-direction: column;
+
+  overflow: auto;
+
+  justify-content: center;
+}
+
+.img-details {
+  width: 260px;
+  height: auto;
+}
+
+.close-button {
+  position: sticky;
+  top: 8px;
+  align-self: flex-start;
+
+  background: transparent;
+  border: none;
+
+  font-size: 18px;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+
+  z-index: 10;
+
+  color: var(--text-color);
+}
