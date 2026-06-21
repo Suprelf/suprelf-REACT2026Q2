@@ -1,60 +1,47 @@
-"use client"
+import Link from "next/link";
 
 import ItemGrid from "@/components/itemGrid/itemGrid";
-import { Pokemon } from "@/types/types";
+import type { Pokemon } from "@/types/types";
 
-const MOCK_DATA: Pokemon[] = [
-  {
-    name: "bulbasaur",
-    image:
-      "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png",
-    url: "test",
-  },
-  {
-    name: "ivysaur",
-    image:
-      "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/2.png",
-    url: "test",
-  },
-  {
-    name: "venusaur",
-    image:
-      "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/3.png",
-    url: "test",
-  },
-  {
-    name: "charmander",
-    image:
-      "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/4.png",
-    url: "test",
-  },
-  {
-    name: "charmeleon",
-    image:
-      "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/5.png",
-    url: "test",
-  },
-  {
-    name: "charizard",
-    image:
-      "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/6.png",
-    url: "test",
-  }
-];
+import { fetchPokemonList } from "@/services/api";
 
-export default function Page() {
-  const handleSelect = (pokemon: Pokemon) => {
-    console.log("Selected:", pokemon.name);
-  };
+import "./container.css";
+
+type Props = {
+  searchParams: Promise<{
+    page?: string;
+  }>;
+};
+
+export default async function Page({ searchParams }: Props) {
+  const params = await searchParams; // 👈 ВОТ ЭТО ГЛАВНОЕ
+
+  const page = Number(params.page ?? 1);
+
+  const limit = 10;
+  const offset = (page - 1) * limit;
+
+  const list: Pokemon[] = await fetchPokemonList(limit, offset);
 
   return (
-    <div>
-      <ItemGrid listData={MOCK_DATA} onSelect={handleSelect} />
+    <div className="container">
+      <div className="layout">
+        <ItemGrid listData={list} />
+      </div>
 
-      <div style={{ marginTop: 20 }}>
-        <button disabled>◀</button>
-        <span style={{ margin: "0 10px" }}>1</span>
-        <button disabled>▶</button>
+      <div className="paginator-buttons">
+        <Link
+          className="paginator-button"
+          href={`?page=${Math.max(page - 1, 1)}`}
+        >
+          ◀
+        </Link>
+
+        <div className="paginator-button">{page}</div>
+
+        <Link className="paginator-button" href={`?page=${page + 1}`}>
+          ▶
+        </Link>
       </div>
     </div>
   );

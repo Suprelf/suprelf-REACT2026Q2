@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import type { Pokemon } from '@/types/types';
-import { usePokemonStore } from '@/store/store';
+import type { Pokemon } from "@/types/types";
+import { usePokemonStore } from "@/store/store";
 
 type Props = {
   pokemon: Pokemon;
@@ -10,9 +10,7 @@ type Props = {
 
 export default function ItemCard({ pokemon, onSelect }: Props) {
   const togglePokemon = usePokemonStore((state) => state.togglePokemon);
-  const isMarked = usePokemonStore((state) =>
-    state.isSelected(pokemon.name)
-  );
+  const isMarked = usePokemonStore((state) => state.isSelected(pokemon.name));
 
   const formatName = (name: string) =>
     name.charAt(0).toUpperCase() + name.slice(1);
@@ -21,7 +19,7 @@ export default function ItemCard({ pokemon, onSelect }: Props) {
     <div
       className="grid-item"
       onClick={() => onSelect(pokemon)}
-      style={{ position: 'relative' }}
+      style={{ position: "relative" }}
     >
       <input
         type="checkbox"
@@ -31,11 +29,7 @@ export default function ItemCard({ pokemon, onSelect }: Props) {
         className="card-checkbox"
       />
 
-      <img
-        className="img-card"
-        src={pokemon.image}
-        alt={pokemon.name}
-      />
+      <img className="img-card" src={pokemon.image} alt={pokemon.name} />
 
       <div>{formatName(pokemon.name)}</div>
     </div>

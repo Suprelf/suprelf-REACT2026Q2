@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-
+import "./searchBar.css"
 
 import { useLocalStorage } from '../../hooks/useLocalStorage';
 

@@ -1,19 +1,30 @@
+'use client';
+
+import './itemGrid.css';
+
 import type { Pokemon } from '@/types/types';
 import ItemCard from '../itemCard/itemCard';
 
+import { useRouter } from 'next/navigation';
+
 type Props = {
   listData: Pokemon[];
-  onSelect: (pokemon: Pokemon) => void;
 };
 
-export default function ItemGrid({ listData, onSelect }: Props) {
+export default function ItemGrid({ listData }: Props) {
+  const router = useRouter();
+
+  const handleSelect = (pokemon: Pokemon) => {
+    router.push(`/pokemon/${pokemon.name}`);
+  };
+
   return (
     <div className="grid-container">
       {listData.map((pokemon) => (
         <ItemCard
           key={pokemon.name}
           pokemon={pokemon}
-          onSelect={onSelect}
+          onSelect={handleSelect}
         />
       ))}
     </div>

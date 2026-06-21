@@ -1,5 +1,6 @@
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
+import "./about.css"
 
 export default function AboutPage() {
   const t = useTranslations();

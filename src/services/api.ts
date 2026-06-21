@@ -10,7 +10,9 @@ import type {
 const API_URL = 'https://pokeapi.co/api/v2';
 
 const request = async <T>(url: string): Promise<T> => {
-  const res = await fetch(url);
+  const res = await fetch(url, {
+    cache: 'no-store',
+  });
 
   if (!res.ok) {
     throw new Error(`Request failed: ${res.status}`);
