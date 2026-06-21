@@ -9,13 +9,12 @@ export default function Error({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
-  const t = useTranslations();
 
   return (
     <div className="page">
-      <h2>{t("errorTitle")}</h2>
+      <h2>error</h2>
       <button onClick={() => reset()}>
-        {t("refresh")}
+        refresh
       </button>
     </div>
   );
