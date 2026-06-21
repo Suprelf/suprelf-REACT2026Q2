@@ -1,11 +1,9 @@
-'use client';
+"use client";
 
-import './itemGrid.css';
-
-import type { Pokemon } from '@/types/types';
-import ItemCard from '../itemCard/itemCard';
-
-import { useRouter } from 'next/navigation';
+import "./itemGrid.css";
+import type { Pokemon } from "@/types/types";
+import ItemCard from "../itemCard/itemCard";
+import { useRouter, useParams } from "next/navigation";
 
 type Props = {
   listData: Pokemon[];
@@ -13,10 +11,12 @@ type Props = {
 
 export default function ItemGrid({ listData }: Props) {
   const router = useRouter();
+  const params = useParams();
+
+  const locale = params?.locale ?? "en";
 
   const handleSelect = (pokemon: Pokemon) => {
-    console.log(pokemon.name)
-    router.push(`/en/pokemon/${pokemon.name}`);
+    router.push(`/${locale}/pokemon/${pokemon.name}`);
   };
 
   return (

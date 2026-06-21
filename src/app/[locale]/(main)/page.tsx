@@ -1,16 +1,12 @@
 import Link from "next/link";
-
 import ItemGrid from "@/components/itemGrid/itemGrid";
 import type { Pokemon } from "@/types/types";
-
 import { fetchPokemonList } from "@/services/api";
 
 import "./container.css";
 
 type Props = {
-  searchParams: Promise<{
-    page?: string;
-  }>;
+  searchParams: Promise<{ page?: string }>;
 };
 
 export default async function Page({ searchParams }: Props) {
@@ -24,25 +20,23 @@ export default async function Page({ searchParams }: Props) {
   const list: Pokemon[] = await fetchPokemonList(limit, offset);
 
   return (
-    <div className="container">
-      <div className="layout">
-        <ItemGrid listData={list} />
-      </div>
+    <>
+      <ItemGrid listData={list} />
 
       <div className="paginator-buttons">
         <Link
-          className="paginator-button"
           href={`?page=${Math.max(page - 1, 1)}`}
+          className="paginator-button"
         >
           ◀
         </Link>
 
         <div className="paginator-button">{page}</div>
 
-        <Link className="paginator-button" href={`?page=${page + 1}`}>
+        <Link href={`?page=${page + 1}`} className="paginator-button">
           ▶
         </Link>
       </div>
-    </div>
+    </>
   );
 }

@@ -1,5 +1,4 @@
 import SearchBar from "@/components/searchBar/searchBar";
-
 import "./container.css";
 
 export default function MainLayout({
@@ -14,11 +13,9 @@ export default function MainLayout({
       <SearchBar />
 
       <div className="layout">
-        {children}
+        <div className="list-slot">{children}</div>
 
-        <div className="details-slot">
-          {details}
-        </div>
+        <div className="details-slot">{details}</div>
       </div>
     </>
   );
