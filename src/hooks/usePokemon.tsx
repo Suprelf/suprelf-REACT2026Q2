@@ -1,6 +1,6 @@
 import { useMinLoadingQuery } from './useMinLoading';
-import { pokemonKeys } from '../services/queryKeys';
-import { fetchPokemonList } from '../services/api';
+import { pokemonKeys } from '@/services/queryKeys';
+import { fetchPokemonList } from '@/services/api';
 
 export const usePokemonList = (limit: number, offset: number) => {
   return useMinLoadingQuery({
