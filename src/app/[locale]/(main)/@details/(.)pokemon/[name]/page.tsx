@@ -4,17 +4,27 @@ import "./details.css";
 import { fetchPokemonDetails } from "@/services/api";
 
 type Props = {
-  params: Promise<{ name: string }>;
+  params: Promise<{
+    locale: string;
+    name: string;
+  }>;
+  searchParams: Promise<{
+    page?: string;
+  }>;
 };
 
-export default async function DetailsPage({ params }: Props) {
-  const { name } = await params;
+export default async function DetailsPage({ params, searchParams }: Props) {
+  const { locale, name } = await params;
+  const { page } = await searchParams;
 
   const pokemon = await fetchPokemonDetails(name);
 
   return (
     <aside className="details-panel">
-      <Link href="./.." className="close-button">
+      <Link
+        href={`/${locale}?${page ? `page=${page}` : ""}`}
+        className="close-button"
+      >
         🗙
       </Link>
 

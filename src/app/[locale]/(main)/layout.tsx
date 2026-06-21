@@ -11,10 +11,8 @@ export default function MainLayout({
   return (
     <>
       <SearchBar />
-
       <div className="layout">
         <div className="list-slot">{children}</div>
-
         <div className="details-slot">{details}</div>
       </div>
     </>
