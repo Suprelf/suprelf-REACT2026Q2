@@ -1,3 +1,11 @@
-export default function Page() {
-  return <h1>TEST</h1>;
+import { getLocale } from "next-intl/server";
+
+export default async function HomePage() {
+  const locale = await getLocale();
+
+  return (
+    <>
+      <div>Locale: {locale}</div>
+    </>
+  );
 }

@@ -1,12 +1,15 @@
+import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 
 export default function AboutPage() {
+  const t = useTranslations();
+
   return (
     <div className="page">
-      <h1>About this app</h1>
+      <h1>{t("about")}</h1>
 
       <p>
-        Author:{" "}
+        {t("author")}:{" "}
         <a
           href="https://github.com/Suprelf"
           target="_blank"
@@ -21,10 +24,10 @@ export default function AboutPage() {
         target="_blank"
         rel="noopener noreferrer"
       >
-        React Course
+        {t("course")}
       </a>
 
-      <Link href="/">Go Home</Link>
+      <Link href="/">{t("goHome")}</Link>
     </div>
   );
 }

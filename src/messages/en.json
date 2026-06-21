@@ -1,5 +1,10 @@
 {
-    "home": "Home",
-    "about": "About",
-    "goHome": "Go home"
+  "home": "Home",
+  "about": "About this app",
+  "notFoundTitle": "Page not found",
+  "goHome": "Go home",
+  "author": "Author",
+  "course": "React Course",
+  "errorTitle": "Something went wrong",
+  "refresh": "Refresh"
 }
