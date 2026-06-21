@@ -15,7 +15,8 @@ export default function ItemGrid({ listData }: Props) {
   const router = useRouter();
 
   const handleSelect = (pokemon: Pokemon) => {
-    router.push(`/pokemon/${pokemon.name}`);
+    console.log(pokemon.name)
+    router.push(`/en/pokemon/${pokemon.name}`);
   };
 
   return (

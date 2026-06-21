@@ -1,18 +1,25 @@
-"use client";
-
 import SearchBar from "@/components/searchBar/searchBar";
 
-import "./container.css"
+import "./container.css";
 
 export default function MainLayout({
   children,
+  details,
 }: {
   children: React.ReactNode;
+  details: React.ReactNode;
 }) {
   return (
-    <div>
-      <SearchBar onSearch={(value) => console.log(value)} />
-      {children}
-    </div>
+    <>
+      <SearchBar />
+
+      <div className="layout">
+        {children}
+
+        <div className="details-slot">
+          {details}
+        </div>
+      </div>
+    </>
   );
 }

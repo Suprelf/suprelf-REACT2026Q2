@@ -1,43 +1,41 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import Link from 'next/link';
-import "./searchBar.css"
+import "./searchBar.css";
 
-import { useLocalStorage } from '../../hooks/useLocalStorage';
+import { useRouter, useSearchParams } from "next/navigation";
+import { useState, useEffect } from "react";
 
-type Props = {
-  onSearch: (value: string) => void;
-};
+export default function SearchBar() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
-const SearchBar = ({ onSearch }: Props) => {
-  const [storedValue, setStoredValue] = useLocalStorage('last', '');
-  const [inputValue, setInputValue] = useState('');
+  const [value, setValue] = useState("");
 
   useEffect(() => {
-    setInputValue(storedValue);
-  }, [storedValue]);
-
-  const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInputValue(e.target.value);
-  };
+    const search = searchParams.get("search") ?? "";
+    setValue(search);
+  }, [searchParams]);
 
   const handleSearch = () => {
-    const trimmed = inputValue.trim();
+    const params = new URLSearchParams(searchParams.toString());
 
-    if (!trimmed || trimmed === storedValue) return;
+    params.set("page", "1");
 
-    setStoredValue(trimmed);
-    onSearch(trimmed);
+    if (value.trim()) {
+      params.set("search", value.trim());
+    } else {
+      params.delete("search");
+    }
+
+    router.push(`?${params.toString()}`);
   };
 
   return (
     <div className="main-container">
       <div className="search-container">
-
         <input
-          value={inputValue}
-          onChange={handleInput}
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
           placeholder="Search here"
           className="search-input"
         />
@@ -46,15 +44,6 @@ const SearchBar = ({ onSearch }: Props) => {
           Search
         </button>
       </div>
-
-      <div className="app-buttons">
-        <Link className="about-link search-button" href="/en/about"> {/*TODO ROUTES*/}
-          About
-        </Link>
-
-      </div>
     </div>
   );
-};
-
-export default SearchBar;
+}
