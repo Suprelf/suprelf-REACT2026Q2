@@ -1,5 +1,6 @@
 import SearchBar from "@/components/searchBar/searchBar";
 import "./container.css";
+import FlyoutPanel from "@/components/flyoutPanel/flyoutPanel";
 
 export default function MainLayout({
   children,
@@ -15,6 +16,7 @@ export default function MainLayout({
         <div className="list-slot">{children}</div>
         <div className="details-slot">{details}</div>
       </div>
+      <FlyoutPanel/>
     </>
   );
 }
