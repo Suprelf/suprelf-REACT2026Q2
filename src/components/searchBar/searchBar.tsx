@@ -8,6 +8,8 @@ import { useState, useEffect } from "react";
 import ThemeSwitch from "../themeSwitch/themeSwitch";
 import LocaleSwitch from "../localeSwitch/localeSwitch";
 
+const STORAGE_KEY = "last-search";
+
 export default function SearchBar() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -15,20 +17,35 @@ export default function SearchBar() {
   const [value, setValue] = useState("");
 
   useEffect(() => {
-    const search = searchParams.get("search") ?? "";
-    setValue(search);
+    const urlSearch = searchParams.get("search");
+
+    if (urlSearch) {
+      setValue(urlSearch);
+      localStorage.setItem(STORAGE_KEY, urlSearch);
+      return;
+    }
+
+    const saved = localStorage.getItem(STORAGE_KEY);
+
+    if (saved) {
+      setValue(saved);
+    }
   }, [searchParams]);
 
+  const handleChange = (val: string) => {
+    setValue(val);
+  };
+
   const handleSearch = () => {
-    const params = new URLSearchParams();
-
-    params.set("page", "1");
-
     const trimmed = value.trim();
 
-    if (trimmed) {
-      params.set("search", trimmed);
-    }
+    if (!trimmed) return;
+
+    const params = new URLSearchParams();
+    params.set("page", "1");
+    params.set("search", trimmed);
+
+    localStorage.setItem(STORAGE_KEY, trimmed);
 
     router.push(`/?${params.toString()}`);
   };
@@ -38,7 +55,7 @@ export default function SearchBar() {
       <div className="search-container">
         <input
           value={value}
-          onChange={(e) => setValue(e.target.value)}
+          onChange={(e) => handleChange(e.target.value)}
           placeholder="Search here"
           className="search-input"
         />
