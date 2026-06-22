@@ -10,13 +10,13 @@ export default function MainLayout({
   details: React.ReactNode;
 }) {
   return (
-    <>
+    <div className="container">
       <SearchBar />
       <div className="layout">
         <div className="list-slot">{children}</div>
         <div className="details-slot">{details}</div>
       </div>
       <FlyoutPanel/>
-    </>
+    </div>
   );
 }
