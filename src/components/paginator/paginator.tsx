@@ -1,21 +1,21 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useSearchParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 
-import "./container.css"
-
+import "./container.css";
 
 export default function Paginator() {
-  const pathname = usePathname();
+  const params = useParams();
   const searchParams = useSearchParams();
 
+  const locale = params.locale as string;
   const page = Number(searchParams.get("page") ?? "1");
 
   return (
     <div className="paginator-buttons">
       <Link
-        href={`${pathname}?page=${Math.max(page - 1, 1)}`}
+        href={`/${locale}?page=${Math.max(page - 1, 1)}`}
         className="paginator-button"
       >
         ◀
@@ -23,10 +23,7 @@ export default function Paginator() {
 
       <div className="paginator-button">{page}</div>
 
-      <Link
-        href={`${pathname}?page=${page + 1}`}
-        className="paginator-button"
-      >
+      <Link href={`/${locale}?page=${page + 1}`} className="paginator-button">
         ▶
       </Link>
     </div>

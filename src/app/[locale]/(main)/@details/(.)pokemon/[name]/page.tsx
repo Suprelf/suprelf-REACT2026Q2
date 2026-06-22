@@ -1,7 +1,7 @@
 import Image from "next/image";
-import Link from "next/link";
 import "./details.css";
 import { fetchPokemonDetails } from "@/services/api";
+import CloseButton from "./closeButton";
 
 type Props = {
   params: Promise<{
@@ -13,20 +13,14 @@ type Props = {
   }>;
 };
 
-export default async function DetailsPage({ params, searchParams }: Props) {
-  const { locale, name } = await params;
-  const { page } = await searchParams;
+export default async function DetailsPage({ params }: Props) {
+  const { name } = await params;
 
   const pokemon = await fetchPokemonDetails(name);
 
   return (
     <aside className="details-panel">
-      <Link
-        href={`/${locale}?${page ? `page=${page}` : ""}`}
-        className="close-button"
-      >
-        🗙
-      </Link>
+      <CloseButton />
 
       <Image
         src={pokemon.image}
