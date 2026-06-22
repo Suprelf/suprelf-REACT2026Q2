@@ -3,6 +3,7 @@
 import "./itemCard.css";
 import type { Pokemon } from "@/types/types";
 import { usePokemonStore } from "@/store/store";
+import Image from "next/image";
 
 type Props = {
   pokemon: Pokemon;
@@ -23,9 +24,17 @@ export default function ItemCard({ pokemon, onSelect }: Props) {
         className="card-checkbox"
       />
 
-      <img className="img-card" src={pokemon.image} alt={pokemon.name} />
+      <Image
+        className="img-card"
+        src={pokemon.image}
+        alt={pokemon.name}
+        width={144}
+        height={144}
+      />
 
-      <div>{pokemon.name[0].toUpperCase() + pokemon.name.slice(1)}</div>
+      <div>
+        {pokemon.name[0].toUpperCase() + pokemon.name.slice(1)}
+      </div>
     </div>
   );
 }

@@ -27,7 +27,6 @@ export default async function DetailsPage({ params }: Props) {
         alt={pokemon.name}
         width={150}
         height={150}
-        unoptimized
       />
 
       <h2>{pokemon.name}</h2>
