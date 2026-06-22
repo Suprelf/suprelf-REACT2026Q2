@@ -56,9 +56,10 @@
 .layout {
   display: flex;
   gap: 24px;
-  width: 100%;
-
+  width: auto;
   align-items: flex-start;
+
+  justify-content: center;
 
   min-height: 400px;
 }
@@ -83,6 +84,14 @@
   flex: 1;
   min-width: 0;
 }
+
 .grid-container {
   width: 100%;
+}
+
+.details-slot {}
+
+.list-slot {
+
+  width: 110%;
 }

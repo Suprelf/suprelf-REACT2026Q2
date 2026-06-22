@@ -2,12 +2,15 @@
 
 import "./searchBar.css";
 
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams, useParams } from "next/navigation";
 import { useState, useEffect } from "react";
 
 export default function SearchBar() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const paramsRoute = useParams();
+
+  const locale = (paramsRoute?.locale as string) ?? "en";
 
   const [value, setValue] = useState("");
 
@@ -17,17 +20,17 @@ export default function SearchBar() {
   }, [searchParams]);
 
   const handleSearch = () => {
-    const params = new URLSearchParams(searchParams.toString());
+    const params = new URLSearchParams();
 
     params.set("page", "1");
 
-    if (value.trim()) {
-      params.set("search", value.trim());
-    } else {
-      params.delete("search");
+    const trimmed = value.trim();
+
+    if (trimmed) {
+      params.set("search", trimmed);
     }
 
-    router.push(`?${params.toString()}`);
+    router.push(`/${locale}?${params.toString()}`);
   };
 
   return (

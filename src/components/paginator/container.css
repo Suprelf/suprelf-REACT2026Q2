@@ -24,6 +24,8 @@
   justify-content: space-between;
   align-items: center;
   width: 80%;
+
+  padding-top: 16px;
 }
 
 .paginator-button {
