@@ -3,15 +3,15 @@ import ItemGrid from "./itemGrid";
 
 const pushMock = jest.fn();
 
-jest.mock("next/navigation", () => ({
+jest.mock("@/i18n/navigation", () => ({
   useRouter: () => ({
     push: pushMock,
   }),
+}));
+
+jest.mock("next/navigation", () => ({
   useSearchParams: () => ({
     get: () => "2",
-  }),
-  useParams: () => ({
-    locale: "en",
   }),
 }));
 
@@ -44,7 +44,7 @@ describe("ItemGrid", () => {
 
     fireEvent.click(screen.getByText("pikachu"));
 
-    expect(pushMock).toHaveBeenCalledWith("/en/pokemon/pikachu?page=2");
+    expect(pushMock).toHaveBeenCalledWith("/pokemon/pikachu?page=2");
   });
 
   it("uses correct route for second pokemon", () => {
@@ -52,6 +52,6 @@ describe("ItemGrid", () => {
 
     fireEvent.click(screen.getByText("bulbasaur"));
 
-    expect(pushMock).toHaveBeenCalledWith("/en/pokemon/bulbasaur?page=2");
+    expect(pushMock).toHaveBeenCalledWith("/pokemon/bulbasaur?page=2");
   });
 });

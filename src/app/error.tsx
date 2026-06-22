@@ -1,17 +1,20 @@
 "use client";
 
+import { useTranslations } from "next-intl";
+
 export default function Error({
-  reset
+  reset,
 }: {
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  const t = useTranslations();
 
   return (
     <div className="page">
-      <h2>error</h2>
+      <h2>{t("errorTitle")}</h2>
       <button onClick={() => reset()}>
-        refresh
+        {t("refresh")}
       </button>
     </div>
   );

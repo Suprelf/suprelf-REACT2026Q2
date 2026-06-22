@@ -21,11 +21,11 @@ export default async function LocaleLayout({
 
   const typedLocale = locale as Locale;
 
+  setRequestLocale(typedLocale);
+
   if (!routing.locales.includes(typedLocale)) {
     notFound();
   }
-
-  setRequestLocale(typedLocale);
 
   const messages = await getMessages();
 
