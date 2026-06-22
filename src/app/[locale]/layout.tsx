@@ -4,6 +4,8 @@ import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import { ThemeProvider } from "@/context/themeContext";
 
+type Locale = (typeof routing.locales)[number];
+
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
 }
@@ -17,17 +19,19 @@ export default async function LocaleLayout({
 }) {
   const { locale } = await params;
 
-  if (!routing.locales.includes(locale as any)) {
+  const typedLocale = locale as Locale;
+
+  if (!routing.locales.includes(typedLocale)) {
     notFound();
   }
 
-  setRequestLocale(locale);
+  setRequestLocale(typedLocale);
 
   const messages = await getMessages();
 
   return (
     <ThemeProvider>
-      <NextIntlClientProvider locale={locale} messages={messages}>
+      <NextIntlClientProvider locale={typedLocale} messages={messages}>
         {children}
       </NextIntlClientProvider>
     </ThemeProvider>
