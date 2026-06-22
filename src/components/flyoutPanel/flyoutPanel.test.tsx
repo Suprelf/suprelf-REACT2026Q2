@@ -42,7 +42,6 @@ describe("FlyoutPanel", () => {
     expect(container.firstChild).toBeNull();
   });
 
-
   it("downloads CSV via fetch", async () => {
     global.fetch = jest.fn().mockResolvedValue({
       ok: true,

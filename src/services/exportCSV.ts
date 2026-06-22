@@ -7,7 +7,7 @@ export async function POST(req: Request) {
   if (!names?.length) {
     return NextResponse.json(
       { error: "No selected pokemons" },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -21,7 +21,7 @@ export async function POST(req: Request) {
         description: details.flavorText,
         image: details.image,
       };
-    })
+    }),
   );
 
   const headers = ["id", "name", "description", "image"];
@@ -36,7 +36,7 @@ export async function POST(req: Request) {
   const csv = [
     headers.join(","),
     ...rows.map((r) =>
-      r.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(",")
+      r.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(","),
     ),
   ].join("\n");
 

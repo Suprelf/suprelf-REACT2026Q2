@@ -16,7 +16,7 @@ describe("MainLayout", () => {
     render(
       <MainLayout details={<div data-testid="details" />}>
         <div data-testid="children" />
-      </MainLayout>
+      </MainLayout>,
     );
 
     expect(screen.getByTestId("searchbar")).toBeInTheDocument();

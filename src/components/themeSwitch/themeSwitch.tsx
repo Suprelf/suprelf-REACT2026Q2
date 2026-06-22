@@ -1,13 +1,13 @@
-"use client"
+"use client";
 
-import { useTheme } from '../../hooks/useTheme';
+import { useTheme } from "../../hooks/useTheme";
 
 const ThemeSwitch = () => {
   const { theme, toggleTheme } = useTheme();
 
   return (
     <button onClick={toggleTheme} className="switch-button">
-      {theme === 'light' ? '☽' : '☼'}
+      {theme === "light" ? "☽" : "☼"}
     </button>
   );
 };

@@ -69,22 +69,22 @@
 }
 
 .card-checkbox:checked::after {
-  content: '✓';
+  content: "✓";
   font-size: 12px;
   color: var(--bg-color);
   line-height: 1;
 }
 
-[data-theme='dark'] .card-checkbox {
+[data-theme="dark"] .card-checkbox {
   border-color: white;
   background-color: #1e1e1e;
 }
 
-[data-theme='dark'] .card-checkbox:checked {
+[data-theme="dark"] .card-checkbox:checked {
   background-color: white;
   border-color: white;
 }
 
-[data-theme='dark'] .card-checkbox:checked::after {
+[data-theme="dark"] .card-checkbox:checked::after {
   color: #121212;
 }

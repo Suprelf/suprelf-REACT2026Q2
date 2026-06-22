@@ -1,7 +1,7 @@
 import ItemGrid from "@/components/itemGrid/itemGrid";
 import Paginator from "@/components/paginator/paginator";
 import { fetchPokemonList, fetchPokemon } from "@/services/api";
-import "./container.css"
+import "./container.css";
 
 export default async function Page({
   searchParams,
@@ -28,7 +28,7 @@ export default async function Page({
 
       return (
         <div>
-          <ItemGrid listData={[found, ...filtered]}/>
+          <ItemGrid listData={[found, ...filtered]} />
           <Paginator />
         </div>
       );

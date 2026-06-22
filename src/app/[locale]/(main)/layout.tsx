@@ -16,7 +16,7 @@ export default function MainLayout({
         <div className="list-slot">{children}</div>
         <div className="details-slot">{details}</div>
       </div>
-      <FlyoutPanel/>
+      <FlyoutPanel />
     </div>
   );
 }

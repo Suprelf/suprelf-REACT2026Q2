@@ -13,9 +13,7 @@ export default function Error({
   return (
     <div className="page">
       <h2>{t("errorTitle")}</h2>
-      <button onClick={() => reset()}>
-        {t("refresh")}
-      </button>
+      <button onClick={() => reset()}>{t("refresh")}</button>
     </div>
   );
 }

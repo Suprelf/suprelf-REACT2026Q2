@@ -1,5 +1,5 @@
-import { create } from 'zustand';
-import type { PokemonStore } from '@/types/types';
+import { create } from "zustand";
+import type { PokemonStore } from "@/types/types";
 
 export const usePokemonStore = create<PokemonStore>((set, get) => ({
   selectedPokemons: [],

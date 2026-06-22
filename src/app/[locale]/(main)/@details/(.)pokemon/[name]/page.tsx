@@ -22,12 +22,7 @@ export default async function DetailsPage({ params }: Props) {
     <aside className="details-panel">
       <CloseButton />
 
-      <Image
-        src={pokemon.image}
-        alt={pokemon.name}
-        width={150}
-        height={150}
-      />
+      <Image src={pokemon.image} alt={pokemon.name} width={150} height={150} />
 
       <h2>{pokemon.name}</h2>
       <p>{pokemon.flavorText}</p>

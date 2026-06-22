@@ -27,10 +27,7 @@ describe("Home Page", () => {
   });
 
   it("renders list without search", async () => {
-    mockList.mockResolvedValue([
-      { name: "pikachu" },
-      { name: "bulbasaur" },
-    ]);
+    mockList.mockResolvedValue([{ name: "pikachu" }, { name: "bulbasaur" }]);
 
     const page = await Page({
       searchParams: Promise.resolve({ page: "1" }),
@@ -40,10 +37,7 @@ describe("Home Page", () => {
   });
 
   it("renders with found pokemon at top", async () => {
-    mockList.mockResolvedValue([
-      { name: "pikachu" },
-      { name: "bulbasaur" },
-    ]);
+    mockList.mockResolvedValue([{ name: "pikachu" }, { name: "bulbasaur" }]);
 
     mockFind.mockResolvedValue({
       name: "charizard",

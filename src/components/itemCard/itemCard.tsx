@@ -32,9 +32,7 @@ export default function ItemCard({ pokemon, onSelect }: Props) {
         height={144}
       />
 
-      <div>
-        {pokemon.name[0].toUpperCase() + pokemon.name.slice(1)}
-      </div>
+      <div>{pokemon.name[0].toUpperCase() + pokemon.name.slice(1)}</div>
     </div>
   );
 }

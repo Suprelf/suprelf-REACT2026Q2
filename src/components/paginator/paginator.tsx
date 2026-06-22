@@ -21,10 +21,7 @@ export default function Paginator() {
 
       <div className="paginator-button">{page}</div>
 
-      <Link
-        href={`/?page=${page + 1}`}
-        className="paginator-button"
-      >
+      <Link href={`/?page=${page + 1}`} className="paginator-button">
         ▶
       </Link>
     </div>

@@ -17,7 +17,7 @@ export const useLocale = () => {
 
     router.replace(
       { pathname, query: Object.fromEntries(searchParams.entries()) },
-      { locale: nextLocale, scroll: false }
+      { locale: nextLocale, scroll: false },
     );
   };
 

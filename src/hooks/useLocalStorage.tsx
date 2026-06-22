@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
-export const useLocalStorage = (key: string, initialValue = '') => {
+export const useLocalStorage = (key: string, initialValue = "") => {
   const [value, setValue] = useState<string>(() => {
     try {
       const item = localStorage.getItem(key);
@@ -14,7 +14,7 @@ export const useLocalStorage = (key: string, initialValue = '') => {
     try {
       localStorage.setItem(key, value);
     } catch {
-      console.error('localStorage error:', Error);
+      console.error("localStorage error:", Error);
     }
   }, [key, value]);
 

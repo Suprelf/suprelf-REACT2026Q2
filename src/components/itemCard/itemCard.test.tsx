@@ -1,7 +1,6 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import ItemCard from "./itemCard";
 
-
 const togglePokemonMock = jest.fn();
 
 let isMarkedMock = false;
