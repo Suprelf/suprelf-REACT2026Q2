@@ -6,6 +6,7 @@ import "./searchBar.css";
 import { useRouter, useSearchParams, useParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import ThemeSwitch from "../themeSwitch/themeSwitch";
+import LocaleSwitch from "../localeSwitch/localeSwitch";
 
 export default function SearchBar() {
   const router = useRouter();
@@ -54,6 +55,8 @@ export default function SearchBar() {
         </Link>
 
          <ThemeSwitch></ThemeSwitch>
+
+         <LocaleSwitch></LocaleSwitch>
       </div>
     </div>
   );
