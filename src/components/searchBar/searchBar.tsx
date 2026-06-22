@@ -1,15 +1,17 @@
 "use client";
 
+import { useRouter, usePathname } from "@/i18n/navigation";
 import Link from "next/link";
 import "./searchBar.css";
 
-import { useRouter, useSearchParams, useParams } from "next/navigation";
+import { useSearchParams, useParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import ThemeSwitch from "../themeSwitch/themeSwitch";
 import LocaleSwitch from "../localeSwitch/localeSwitch";
 
 export default function SearchBar() {
   const router = useRouter();
+  const pathname = usePathname();
   const searchParams = useSearchParams();
   const paramsRoute = useParams();
 
