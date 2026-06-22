@@ -1,9 +1,11 @@
 "use client";
 
+import Link from "next/link";
 import "./searchBar.css";
 
 import { useRouter, useSearchParams, useParams } from "next/navigation";
 import { useState, useEffect } from "react";
+import ThemeSwitch from "../themeSwitch/themeSwitch";
 
 export default function SearchBar() {
   const router = useRouter();
@@ -46,6 +48,12 @@ export default function SearchBar() {
         <button onClick={handleSearch} className="search-button">
           Search
         </button>
+
+        <Link className="about-link search-button" href={`/${locale}/about`}>
+          About
+        </Link>
+
+         <ThemeSwitch></ThemeSwitch>
       </div>
     </div>
   );

@@ -45,6 +45,8 @@
 
   cursor: pointer;
   color: var(--text-color);
+
+  text-decoration: none;
 }
 
 .paginator-button:hover {

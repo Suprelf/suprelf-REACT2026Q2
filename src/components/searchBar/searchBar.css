@@ -82,6 +82,10 @@
   box-sizing: border-box;
 }
 
+.about-link {
+  margin-left: 24px;
+}
+
 .switch-button,
 .refresh-button {
   width: var(--control-height);
