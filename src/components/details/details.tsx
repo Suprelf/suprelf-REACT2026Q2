@@ -5,7 +5,7 @@ import { useOutletContext } from 'react-router-dom';
 import type { PokemonDetails } from '../../types/types';
 
 type ContextType = {
-  details: PokemonDetails | null;
+  details: PokemonDetails | undefined;
   detailsLoading: boolean;
   handleClose: () => void;
 };
@@ -14,30 +14,30 @@ const DetailsPanel = () => {
   const { details, detailsLoading, handleClose } =
     useOutletContext<ContextType>();
 
-  const isLoading = detailsLoading || !details;
-
   const formatName = (name: string) =>
     name.charAt(0).toUpperCase() + name.slice(1);
 
-  if (isLoading) {
-    return (
-      <aside className="details-panel">
-        <Loader />
-      </aside>
-    );
-  }
-
   return (
     <aside className="details-panel">
-      <button className="close-button" onClick={handleClose}>
-        🗙
-      </button>
+      {detailsLoading && (
+        <div className="details-loader">
+          <Loader />
+        </div>
+      )}
 
-      <img className="img-details" src={details.image} alt={details.name} />
+      {!detailsLoading && details && (
+        <>
+          <button className="close-button" onClick={handleClose}>
+            🗙
+          </button>
 
-      <div>{formatName(details.name)}</div>
+          <img className="img-details" src={details.image} alt={details.name} />
 
-      <div>{details.flavorText}</div>
+          <div>{formatName(details.name)}</div>
+
+          <div>{details.flavorText}</div>
+        </>
+      )}
     </aside>
   );
 };

@@ -25,18 +25,6 @@ describe('DetailsPanel', () => {
     expect(screen.getByTestId('loader')).toBeInTheDocument();
   });
 
-  it('shows loader when no details yet', () => {
-    mockedUseOutletContext.mockReturnValue({
-      details: null,
-      detailsLoading: false,
-      handleClose: vi.fn(),
-    });
-
-    render(<DetailsPanel />);
-
-    expect(screen.getByTestId('loader')).toBeInTheDocument();
-  });
-
   it('renders pokemon details', () => {
     mockedUseOutletContext.mockReturnValue({
       details: {

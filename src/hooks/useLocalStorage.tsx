@@ -13,7 +13,9 @@ export const useLocalStorage = (key: string, initialValue = '') => {
   useEffect(() => {
     try {
       localStorage.setItem(key, value);
-    } catch {}
+    } catch {
+      console.error('localStorage error:', Error);
+    }
   }, [key, value]);
 
   return [value, setValue] as const;

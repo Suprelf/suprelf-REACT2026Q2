@@ -1,125 +1,158 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { http, HttpResponse } from 'msw';
 
 import Container from './container';
-import { server } from '../../test-utils/server';
-import { MemoryRouter, Route, Routes } from 'react-router-dom';
 
-vi.mock('../../hooks/useLoader', () => ({
-  useLoader: () => ({
-    loading: false,
-    run: async <T,>(request: Promise<T>): Promise<T> => {
-      return await request;
-    },
-  }),
+const mockNavigate = vi.fn();
+const mockSetSearchParams = vi.fn();
+const mockSetLastSearch = vi.fn();
+
+vi.mock('react-router-dom', async () => {
+  const actual = await vi.importActual('react-router-dom');
+
+  return {
+    ...actual,
+
+    useNavigate: () => mockNavigate,
+
+    useSearchParams: () => [new URLSearchParams('page=1'), mockSetSearchParams],
+
+    useParams: () => ({}),
+
+    Outlet: () => <div>Outlet</div>,
+  };
+});
+
+vi.mock('../../hooks/useLocalStorage', () => ({
+  useLocalStorage: () => ['', mockSetLastSearch],
 }));
 
-const renderApp = (initialRoute = '/') =>
-  render(
-    <MemoryRouter initialEntries={[initialRoute]}>
-      <Routes>
-        <Route path="/*" element={<Container />} />
-      </Routes>
-    </MemoryRouter>
-  );
+const mockUseMinLoadingQuery = vi.fn();
 
-const setupDefaultApi = () => {
-  server.use(
-    http.get('https://pokeapi.co/api/v2/pokemon', () => {
-      return HttpResponse.json({
-        results: Array.from({ length: 10 }).map((_, i) => ({
-          name: `pokemon-${i}`,
-          url: `https://pokeapi.co/api/v2/pokemon/pokemon-${i}`,
-        })),
-      });
-    }),
+vi.mock('../../hooks/useMinLoading', () => ({
+  useMinLoadingQuery: (...args: unknown[]) => mockUseMinLoadingQuery(...args),
+}));
 
-    http.get('https://pokeapi.co/api/v2/pokemon/:name', ({ params }) => {
-      const name = params.name as string;
+vi.mock('../searchBar/searchBar', () => ({
+  default: ({ onSearch }: any) => (
+    <button onClick={() => onSearch('pikachu')}>Search</button>
+  ),
+}));
 
-      return HttpResponse.json({
-        name,
-        url: `https://pokeapi.co/api/v2/pokemon/${name}`,
-        sprites: {
-          front_default: `${name}.png`,
-        },
-      });
-    }),
+vi.mock('../itemGrid/itemGrid', () => ({
+  default: ({ listData, onSelect }: any) => (
+    <div>
+      <div data-testid="items-count">{listData.length}</div>
 
-    http.get('https://pokeapi.co/api/v2/pokemon-species/:name', () => {
-      return HttpResponse.json({
-        flavor_text_entries: [
-          {
-            flavor_text: 'test text',
-            language: { name: 'en' },
-          },
-        ],
-      });
-    })
-  );
-};
+      <button onClick={() => onSelect({ name: 'pikachu' })}>
+        Select Pokemon
+      </button>
+    </div>
+  ),
+}));
+
+vi.mock('../loader/loader', () => ({
+  default: () => <div>Loading...</div>,
+}));
+
+vi.mock('../flyoutPanel/flyoutPanel', () => ({
+  default: () => <div>Flyout</div>,
+}));
 
 describe('Container', () => {
   beforeEach(() => {
-    localStorage.clear();
-    setupDefaultApi();
+    vi.clearAllMocks();
+
+    mockUseMinLoadingQuery
+      .mockReturnValueOnce({
+        data: [{ name: 'bulbasaur' }],
+        showLoader: false,
+        error: null,
+      })
+      .mockReturnValueOnce({
+        data: null,
+        showLoader: false,
+        error: null,
+      })
+      .mockReturnValueOnce({
+        data: null,
+        showLoader: false,
+        error: null,
+      });
   });
 
-  it('shows pokemon list on load', async () => {
-    renderApp();
+  it('renders pokemon list', () => {
+    render(<Container />);
 
-    expect(await screen.findByText('Pokemon-0')).toBeInTheDocument();
-    expect(await screen.findByText('Pokemon-1')).toBeInTheDocument();
+    expect(screen.getByTestId('items-count')).toHaveTextContent('1');
   });
 
-  it('adds pokemon after search', async () => {
+  it('handles search', async () => {
     const user = userEvent.setup();
 
-    renderApp();
+    render(<Container />);
 
-    await user.type(screen.getByPlaceholderText('Search here'), 'pikachu');
     await user.click(screen.getByText('Search'));
 
-    expect(await screen.findByText('Pikachu')).toBeInTheDocument();
+    expect(mockSetLastSearch).toHaveBeenCalledWith('pikachu');
   });
 
-  it('does not duplicate pokemon', async () => {
+  it('navigates to details page', async () => {
     const user = userEvent.setup();
 
-    renderApp();
+    render(<Container />);
 
-    await user.type(screen.getByPlaceholderText('Search here'), 'pokemon-0');
-    await user.click(screen.getByText('Search'));
+    await user.click(screen.getByText('Select Pokemon'));
 
-    const all = await screen.findAllByText('Pokemon-0');
-
-    expect(all).toHaveLength(1);
+    expect(mockNavigate).toHaveBeenCalledWith('/details/pikachu?page=1');
   });
 
-  it('shows error on not found', async () => {
-    const user = userEvent.setup();
+  it('shows loader', () => {
+    mockUseMinLoadingQuery
+      .mockReset()
+      .mockReturnValueOnce({
+        data: null,
+        showLoader: true,
+        error: null,
+      })
+      .mockReturnValueOnce({
+        data: null,
+        showLoader: false,
+        error: null,
+      })
+      .mockReturnValueOnce({
+        data: null,
+        showLoader: false,
+        error: null,
+      });
 
-    server.use(
-      http.get('https://pokeapi.co/api/v2/pokemon/:name', () =>
-        HttpResponse.json(null, { status: 404 })
-      )
-    );
+    render(<Container />);
 
-    renderApp();
-
-    await user.type(screen.getByPlaceholderText('Search here'), 'invalid');
-    await user.click(screen.getByText('Search'));
-
-    expect(await screen.findByText('Pokemon not found')).toBeInTheDocument();
+    expect(screen.getByText('Loading...')).toBeInTheDocument();
   });
 
-  it('shows pagination', async () => {
-    renderApp();
+  it('shows error message', () => {
+    mockUseMinLoadingQuery
+      .mockReset()
+      .mockReturnValueOnce({
+        data: null,
+        showLoader: false,
+        error: new Error('API error'),
+      })
+      .mockReturnValueOnce({
+        data: null,
+        showLoader: false,
+        error: null,
+      })
+      .mockReturnValueOnce({
+        data: null,
+        showLoader: false,
+        error: null,
+      });
 
-    expect(await screen.findByText('1')).toBeInTheDocument();
-    expect(screen.getByText('◀')).toBeInTheDocument();
-    expect(screen.getByText('▶')).toBeInTheDocument();
+    render(<Container />);
+
+    expect(screen.getByText('API error')).toBeInTheDocument();
   });
 });

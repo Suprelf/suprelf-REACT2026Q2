@@ -1,123 +1,76 @@
-import { useEffect, useState } from 'react';
-import { useNavigate, useSearchParams, Outlet } from 'react-router-dom';
+import {
+  useNavigate,
+  useSearchParams,
+  Outlet,
+  useParams,
+} from 'react-router-dom';
 import './container.css';
 
 import SearchBar from '../searchBar/searchBar';
 import ItemGrid from '../itemGrid/itemGrid';
 import Loader from '../loader/loader';
+import FlyoutPanel from '../flyoutPanel/flyoutPanel';
 
+import type { Pokemon } from '../../types/types';
+
+import { useLocalStorage } from '../../hooks/useLocalStorage';
+import { useMinLoadingQuery } from '../../hooks/useMinLoading';
+
+import { pokemonKeys } from '../../services/queryKeys';
 import {
   fetchPokemon,
-  fetchPokemonList,
   fetchPokemonDetails,
+  fetchPokemonList,
 } from '../../services/api';
-
-import type { Pokemon, PokemonDetails } from '../../types/types';
-
-import { useLoader } from '../../hooks/useLoader';
-import { useLocalStorage } from '../../hooks/useLocalStorage';
-import FlyoutPanel from '../flyoutPanel/flyoutPanel';
 
 const Container = () => {
   const navigate = useNavigate();
-
-  const { loading, run } = useLoader(1200);
-  const { loading: detailsLoading, run: runDetails } = useLoader(1200);
-
   const [searchParams, setSearchParams] = useSearchParams();
 
   const page = Number(searchParams.get('page') ?? 1);
   const limit = 10;
   const offset = (page - 1) * limit;
 
-  const selectedName = window.location.pathname.includes('details')
-    ? window.location.pathname.split('/').pop()
-    : null;
-
-  const [listData, setListData] = useState<Pokemon[]>([]);
-  const [details, setDetails] = useState<PokemonDetails | null>(null);
-
-  const [error, setError] = useState('');
-  const [isSearching, setIsSearching] = useState(false);
-  const [pageLoading, setPageLoading] = useState(false);
-
   const [lastSearch, setLastSearch] = useLocalStorage('last', '');
 
-  useEffect(() => {
-    const load = async () => {
-      try {
-        setPageLoading(true);
+  const { name: selectedName } = useParams();
 
-        const baseList = await run(fetchPokemonList(limit, offset));
+  const listQuery = useMinLoadingQuery({
+    queryKey: pokemonKeys.list(limit, offset),
+    queryFn: () => fetchPokemonList(limit, offset),
+  });
 
-        let finalList = baseList;
+  const searchQuery = useMinLoadingQuery({
+    queryKey: pokemonKeys.search(lastSearch ?? ''),
+    queryFn: () => fetchPokemon(lastSearch),
+    enabled: !!lastSearch,
+  });
 
-        if (lastSearch?.trim()) {
-          try {
-            const found = await run(fetchPokemon(lastSearch));
+  const detailsQuery = useMinLoadingQuery({
+    queryKey: pokemonKeys.details(selectedName ?? ''),
+    queryFn: () => fetchPokemonDetails(selectedName ?? ''),
+    enabled: !!selectedName,
+  });
 
-            finalList = [
-              found,
-              ...baseList.filter((p) => p.name !== found.name),
-            ];
-          } catch {
-            setError('Pokemon not found');
-          }
-        }
+  const baseList = listQuery.data ?? [];
+  const searchPokemon = searchQuery.data;
 
-        setListData(finalList);
-      } catch {
-        setError('Failed to load data');
-      } finally {
-        setPageLoading(false);
-      }
-    };
+  const finalList =
+    lastSearch?.trim() && searchPokemon
+      ? [
+          searchPokemon,
+          ...baseList.filter((p) => p.name !== searchPokemon.name),
+        ]
+      : baseList;
 
-    load();
-  }, [page, lastSearch]);
+  const handleSearch = (value: string) => {
+    setSearchParams((prev) => {
+      const params = new URLSearchParams(prev);
+      params.set('page', '1');
+      return params;
+    });
 
-  useEffect(() => {
-    const loadDetails = async () => {
-      if (!selectedName) {
-        setDetails(null);
-        return;
-      }
-
-      try {
-        const data = await runDetails(fetchPokemonDetails(selectedName));
-        setDetails(data);
-      } catch {
-        setError('Failed to load details');
-      }
-    };
-
-    loadDetails();
-  }, [selectedName]);
-
-  const handleSearch = async (value: string) => {
-    try {
-      setError('');
-      setIsSearching(true);
-
-      const newPokemon = await run(fetchPokemon(value));
-
-      setListData((prev) => {
-        const exists = prev.some((p) => p.name === newPokemon.name);
-        return exists ? prev : [newPokemon, ...prev];
-      });
-
-      setSearchParams((prev) => {
-        const params = new URLSearchParams(prev);
-        params.set('page', '1');
-        return params;
-      });
-
-      setLastSearch(value);
-    } catch {
-      setError('Pokemon not found');
-    } finally {
-      setIsSearching(false);
-    }
+    setLastSearch(value);
   };
 
   const handleSelect = (pokemon: Pokemon) => {
@@ -136,32 +89,43 @@ const Container = () => {
     });
   };
 
-  const isLoading =
-    (loading && listData.length === 0) || pageLoading || isSearching;
+  const pageLoading = listQuery.showLoader || searchQuery.showLoader;
+
+  const error = listQuery.error || searchQuery.error || detailsQuery.error;
 
   return (
     <div className="container">
       <SearchBar onSearch={handleSearch} />
 
-      {isLoading && (
+      {pageLoading && (
         <div className="loader-overlay">
           <Loader />
         </div>
       )}
 
-      {!isLoading && error && <div className="error-message">{error}</div>}
+      {error && !pageLoading && (
+        <div className="error-message">
+          {error instanceof Error ? error.message : 'Something went wrong'}
+        </div>
+      )}
 
-      {!isLoading && (
+      {!pageLoading && (
         <div className="layout">
-          <ItemGrid listData={listData} onSelect={handleSelect} />
+          <ItemGrid listData={finalList} onSelect={handleSelect} />
 
           <div className="details-slot">
-            <Outlet context={{ details, detailsLoading, handleClose }} />
+            <Outlet
+              context={{
+                details: detailsQuery.data,
+                detailsLoading: detailsQuery.showLoader,
+                handleClose,
+              }}
+            />
           </div>
         </div>
       )}
 
-      {!isLoading && (
+      {!pageLoading && (
         <div className="paginator-buttons">
           <button
             className="paginator-button"
